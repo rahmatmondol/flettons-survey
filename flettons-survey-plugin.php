@@ -67,7 +67,7 @@ function flettons_survey_activate()
         'insurance-reinstatement-valuation' => 200,
         'thermal-images' => 250,
         'api_keys' => array(
-            'keap' => 'KeapAK-7a088b22a672a0edf06681a0580a76ca3d9bcf3702ad598024',
+            'keap' => '',
             'stripe' => '',
             'google_places' => ''
         )

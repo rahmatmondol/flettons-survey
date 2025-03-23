@@ -13,11 +13,6 @@ $level4_price = isset($settings['level-4']) ? $settings['level-4'] : '1024.07';
 ?>
 
 <div class="container" style="background:#ffffff; margin-top:10px; padding-top:5px;">
-    <div class="logo-top">
-        <center>
-            <img src="<?php echo FLETTONS_SURVEY_PLUGIN_URL; ?>assets/images/Logo_400px_loop.gif" alt="Flettons Logo">
-        </center>
-    </div>
     <form class="quote-f" action="">
         <div class="form1" style="display: none;">
             <div class="g-recaptcha" data-sitekey="<?php echo esc_attr($settings['api_keys']['recaptcha'] ?? ''); ?>"></div>
@@ -151,7 +146,7 @@ $level4_price = isset($settings['level-4']) ? $settings['level-4'] : '1024.07';
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-3 level-choice click-level1">
+                        <div class="col-sm-3 col-md-2 level-choice click-level1">
                             <h3 class="frm_pos_top frm_section_spacing">Roof Report</h3>
                             <img alt="Flettons Survyors Full Building Survey Report" title="Level 1" src="<?php echo FLETTONS_SURVEY_PLUGIN_URL; ?>assets/images/ROOF-SURVEY-4.png" width="300" height="300">
                             <label for="field_fullsurvey2" class="frm_primary_label">Drone Survey <span class="frm_required"></span> </label>

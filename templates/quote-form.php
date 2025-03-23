@@ -101,19 +101,9 @@ if (!defined('ABSPATH')) {
         <input type="hidden" name="quote_form_nonce" value="<?php echo wp_create_nonce('flettons_quote_form_nonce'); ?>">
 
         <div class="buttons">
-            <button type="submit" id="submitBtn">GET INSTANT QUOTE</button>
+            <button type="submit" id="proceedBtn" style="padding: 15px 40px;background: #90be13;color: #fff;border: none;border-radius: 10px;">GET INSTANT QUOTE</button>
         </div>
     </form>
-
-    <!-- Quote Summary Container -->
-    <div id="quoteSummary" style="display:none; margin-top:20px; padding:15px; background:#f7f7f7; border-radius:5px;">
-        <h3>Your Quote Summary</h3>
-        <div id="quoteDetails"></div>
-        <div style="margin-top:15px;">
-            <button id="proceedBtn" style="background:#4CAF50; color:white; padding:10px 15px; border:none; border-radius:4px; margin-right:10px; cursor:pointer;">Proceed with Quote</button>
-            <button id="backBtn" style="background:#f1f1f1; padding:10px 15px; border:1px solid #ddd; border-radius:4px; cursor:pointer;">Back to Form</button>
-        </div>
-    </div>
 
     <div class="footer">
         Powered by Flettons Group
