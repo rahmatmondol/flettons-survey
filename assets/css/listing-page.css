@@ -1,348 +1,145 @@
-/* Flettons Survey - Listing Page Styles */
-
-/* Container styles */
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 15px;
-    background: #ffffff;
-    font-family: Arial, sans-serif;
-}
-
-.logo-top {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.logo-top img {
     max-width: 100%;
-    height: auto;
+    background: #000;
+    padding: 30px;
 }
 
-/* Form styles */
 .quote-f {
-    margin-bottom: 30px;
-}
-
-.form1 {
-    margin-bottom: 20px;
-}
-
-.quote {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.quote_text {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-}
-
-.warning {
-    color: red;
-    font-weight: bold;
-    margin-top: 10px;
-}
-
-/* Form inputs and labels */
-.form-group {
-    margin-bottom: 15px;
-}
-
-label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 600;
-}
-
-.form-control {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    font-size: 14px;
-    line-height: 1.5;
-    color: #495057;
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-
-.form-control:focus {
-    border-color: #95c11f;
-    outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(149, 193, 31, 0.25);
-}
-
-/* Grid system */
-.row {
-    display: flex;
-    flex-wrap: wrap;
-    margin-right: -15px;
-    margin-left: -15px;
-}
-
-.col-md-6, .col-sm-3 {
-    position: relative;
-    width: 100%;
-    padding-right: 15px;
-    padding-left: 15px;
-}
-
-/* Survey options overlay */
-.overlay {
-    background: #f9f9f9;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 30px;
-}
-
-.inner {
-    padding: 15px;
-}
-
-.step-1, .step-2 {
-    margin-bottom: 20px;
-}
-
-.frm_pos_top {
-    text-align: center;
-    margin-top: 0;
-    margin-bottom: 15px;
-    color: #333;
-    font-size: 24px;
-}
-
-.frm_section_spacing {
-    margin-bottom: 20px;
-}
-
-.frm_form_field {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-/* Survey level cards */
-.level-choice {
-    text-align: center;
     background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 20px;
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.level-choice:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.level-choice h3 {
-    font-size: 18px;
-    margin-top: 0;
-    margin-bottom: 15px;
-    color: #333;
+    padding: 30px;
+    text-align: center;
 }
 
 .level-choice img {
-    max-width: 100%;
-    height: auto;
-    margin-bottom: 15px;
-}
-
-.frm_primary_label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
-.level-price {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-    margin: 15px 0;
-}
-
-/* Buttons */
-.btn-style {
-    background: #95c11f;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 12px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s;
-    display: inline-block;
-    text-align: center;
-    margin: 0 auto;
-}
-
-.btn-style:hover {
-    background: #7a9f19;
-}
-
-.btn-style-group {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-/* Add-ons section */
-.addons {
-    margin-bottom: 15px;
-}
-
-.addons label {
-    display: block;
-    margin-bottom: 8px;
-}
-
-.addon {
     width: 100%;
 }
 
-/* Footer styles */
-.privacy-checkbox {
-    text-align: center;
-    margin-bottom: 20px;
+
+
+.level3-price.level-price.addons {
+    width: 100%;
+    border-top: 2px solid #ddd;
+    padding-top: 20px;
+    margin-top: 20px;
 }
 
-.privacy-inner p {
+.btn-style-group {
+    width: 100%;
+}
+
+.pac-container {
+    z-index: 9999999999 !important;
+}
+
+.pum-container {
+    left: 0 !important;
+    right: 0 !important;
+    margin: 0 auto !important;
+}
+
+.frm_pos_top.frm_section_spacing {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+form {
+    padding: 30px;
+}
+
+div#html_element>div {
+    margin: 20px auto;
+}
+
+.privacy-checkbox .privacy-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.privacy-checkbox .privacy-inner label {
+    display: none;
+}
+
+.privacy-checkbox .privacy-inner input[type="checkbox"] {}
+
+.privacy-checkbox .privacy-inner p {
     margin: 0;
-    font-size: 14px;
-    color: #666;
 }
 
-/* Responsive styles */
-@media (min-width: 576px) {
-    .col-sm-3 {
-        flex: 0 0 50%;
-        max-width: 50%;
-    }
+.quote {
+    font-size: 30px;
+    text-align: center !important;
 }
 
-@media (min-width: 768px) {
-    .col-md-6 {
-        flex: 0 0 50%;
-        max-width: 50%;
-    }
-    
-    .col-sm-3 {
-        flex: 0 0 25%;
-        max-width: 25%;
-    }
+.quote_amount {
+    font-weight: bold;
 }
 
-@media (max-width: 991px) {
-    .level-choice {
-        padding: 10px;
-    }
-    
-    .frm_pos_top {
-        font-size: 20px;
-    }
-    
-    .level-price {
-        font-size: 20px;
-    }
-    
-    .btn-style {
-        padding: 10px 15px;
-        font-size: 14px;
-    }
+.btn {
+    margin-top: 20px;
 }
 
-@media (max-width: 767px) {
-    .col-sm-3 {
-        flex: 0 0 100%;
-        max-width: 100%;
-    }
-    
-    .row {
-        margin-right: -10px;
-        margin-left: -10px;
-    }
-    
-    .col-md-6, .col-sm-3 {
-        padding-right: 10px;
-        padding-left: 10px;
-    }
-    
-    .frm_pos_top {
-        font-size: 18px;
-    }
-    
-    .level-choice {
-        margin-bottom: 30px;
-    }
-    
-    .btn-style-group {
-        flex-direction: column;
-    }
-    
-    .btn-style {
-        width: 100%;
-        margin-bottom: 10px;
-    }
+.overlay {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background: rgba(0, 0, 0, 0.5);
 }
 
-@media (max-width: 575px) {
-    .container {
-        padding: 10px;
-    }
-    
-    .overlay {
-        padding: 10px;
-    }
-    
-    .inner {
-        padding: 10px;
-    }
-    
-    .frm_pos_top {
-        font-size: 16px;
-    }
-    
-    .level-price {
-        font-size: 18px;
-    }
+.inner {
+    width: 100%;
+    margin: auto;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: relative;
+    height: 100%;
+    background: #fff;
+    text-align: center;
+    padding: 40px;
 }
 
-/* Animations and hover effects */
 .level-choice {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #ccc;
+    padding: 10px;
 }
 
-.level-choice:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+.level-choice img {
+    width: 100%;
+    height: auto;
+}
+
+.addons label {
+    min-height: 50px;
+    font-size: 15px;
+}
+
+.pum-container {
+    margin: auto !important;
+    width: 65% !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    max-height: 800px;
+    overflow-y: scroll !important;
 }
 
 .btn-style {
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    background: #90be13;
+    font-size: 20px;
+    padding: 12px 24px;
+    max-width: 300px;
+    width: 100%;
+    border-color: #95c11f;
+    text-transform: uppercase;
 }
 
-.btn-style:hover {
-    background-color: #f39200;
-    transform: scale(1.05);
-}
-
+.btn-style:hover,
 .btn-style:active {
-    transform: scale(0.98);
-}
-
-/* Telephone field styling */
-.row .telephone-col {
-    padding-left: 0;
-}
-
-/* Google Places autocomplete z-index fix */
-.pac-container {
-    z-index: 9999 !important;
+    background: #f39200;
+    border-color: #f39200;
 }

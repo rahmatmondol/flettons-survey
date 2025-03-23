@@ -118,19 +118,9 @@ class Flettons_Survey
      */
     public function listing_page_shortcode()
     {
-        // Enqueue the Google Places API
-        $api_key = $this->get_setting('api_keys.google_places');
-        if (!empty($api_key)) {
-            wp_enqueue_script(
-                'google-places-api',
-                'https://maps.googleapis.com/maps/api/js?key=' . $api_key . '&libraries=places',
-                array(),
-                null,
-                true
-            );
-        }
 
         wp_enqueue_style('flettons-listing-page');
+        wp_enqueue_style('bootstrap-css', 'https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css', array(), 'all');
         // Enqueue listing page script
         wp_enqueue_script('flettons-listing-page-js');
 

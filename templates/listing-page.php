@@ -12,7 +12,7 @@ $level3_price = isset($settings['level-3']) ? $settings['level-3'] : '611.73';
 $level4_price = isset($settings['level-4']) ? $settings['level-4'] : '1024.07';
 ?>
 
-<div class="container" style="background:#ffffff; margin-top:10px; padding-top:5px;">
+<div class="container">
     <form class="quote-f" action="">
         <div class="form1" style="display: none;">
             <div class="g-recaptcha" data-sitekey="<?php echo esc_attr($settings['api_keys']['recaptcha'] ?? ''); ?>"></div>
@@ -135,41 +135,41 @@ $level4_price = isset($settings['level-4']) ? $settings['level-4'] : '1024.07';
             </div>
         </div>
 
-        <div class="overlay" style="">
+        <div class="overlay">
             <div class="inner">
                 <div class="step-1">
                     <div class="row">
-                        <h3 class="frm_pos_top frm_section_spacing">Your Flettons Surveyors Quotes</h3>
-                        <div id="frm_field_189_container" class="frm_form_field frm_html_container form-field" style="color: #f8a000; font-weight: bold;">
+                        <div id="frm_field_189_container" class="col-sm-12 text-center" style="color: #f8a000; font-weight: bold;">
+                            <h3 class="frm_pos_top frm_section_spacing">Your Flettons Surveyors Quotes</h3>
                             <p>To instruct us, please<br>choose from one of the options below and click Buy Now.</p>
                             <p style="color:black;">The price displayed is the total amount due.</p>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-3 col-md-2 level-choice click-level1">
+                        <div class="col-sm-3 level-choice click-level1 border">
                             <h3 class="frm_pos_top frm_section_spacing">Roof Report</h3>
-                            <img alt="Flettons Survyors Full Building Survey Report" title="Level 1" src="<?php echo FLETTONS_SURVEY_PLUGIN_URL; ?>assets/images/ROOF-SURVEY-4.png" width="300" height="300">
+                            <img class="img-responsive" alt="Flettons Survyors Full Building Survey Report" title="Level 1" src="<?php echo FLETTONS_SURVEY_PLUGIN_URL; ?>assets/images/ROOF-SURVEY-4.png">
                             <label for="field_fullsurvey2" class="frm_primary_label">Drone Survey <span class="frm_required"></span> </label>
                             <div class="level1-price level-price">£<?php echo esc_html($level1_price); ?></div>
                             <button class="btn btn-primary click-level1 btn-style">Buy Now</button>
                         </div>
-                        <div class="col-sm-3 level-choice click-level2">
+                        <div class="col-sm-3 level-choice click-level2 border">
                             <h3 class="frm_pos_top frm_section_spacing">Homebuyer Report</h3>
-                            <img alt="Flettons Survyors Full Building Survey Report" title="Level 2" src="<?php echo FLETTONS_SURVEY_PLUGIN_URL; ?>assets/images/FLETTONS-LEVEL-2-4.png" width="300" height="300">
+                            <img alt="Flettons Survyors Full Building Survey Report" title="Level 2" src="<?php echo FLETTONS_SURVEY_PLUGIN_URL; ?>assets/images/FLETTONS-LEVEL-2-4.png">
                             <label for="field_fullsurvey2" class="frm_primary_label">Level 2 <span class="frm_required"></span> </label>
                             <div class="level2-price level-price">£<?php echo esc_html($level2_price); ?></div>
                             <button class="btn btn-primary click-level2 btn-style">Buy Now</button>
                         </div>
-                        <div class="col-sm-3 level-choice click-level3">
+                        <div class="col-sm-3 level-choice click-level3 border">
                             <h3 class="frm_pos_top frm_section_spacing">Building Survey</h3>
-                            <img alt="Flettons Survyors Full Building Survey Report" title="Level 3" src="<?php echo FLETTONS_SURVEY_PLUGIN_URL; ?>assets/images/FLETTONS-LEVEL-3-4.png" width="300" height="300">
+                            <img alt="Flettons Survyors Full Building Survey Report" title="Level 3" src="<?php echo FLETTONS_SURVEY_PLUGIN_URL; ?>assets/images/FLETTONS-LEVEL-3-4.png">
                             <label for="field_fullsurvey2" class="frm_primary_label">Level 3 <span class="frm_required"></span> </label>
                             <div class="level3-price level-price">£<?php echo esc_html($level3_price); ?></div>
                             <div class="btn btn-primary click-level3 btn-style">Choose Add-ons</div>
                         </div>
-                        <div class="col-sm-3 level-choice click-level4">
+                        <div class="col-sm-3 level-choice click-level4 border">
                             <h3 class="frm_pos_top frm_section_spacing">The Building Survey Plus</h3>
-                            <img alt="Flettons Survyors Full Building Survey Report" title="Level 3+" src="<?php echo FLETTONS_SURVEY_PLUGIN_URL; ?>assets/images/FLETTONS-LEVEL-3-4-1.png" width="300" height="300">
+                            <img alt="Flettons Survyors Full Building Survey Report" title="Level 3+" src="<?php echo FLETTONS_SURVEY_PLUGIN_URL; ?>assets/images/FLETTONS-LEVEL-3-4-1.png">
                             <label for="field_fullsurvey2" class="frm_primary_label">Level 3+ <span class="frm_required"></span> </label>
                             <div class="level4-price level-price">£<?php echo esc_html($level4_price); ?></div>
                             <button class="btn btn-primary click-level4 btn-style">Buy Now</button>
@@ -178,17 +178,16 @@ $level4_price = isset($settings['level-4']) ? $settings['level-4'] : '1024.07';
                 </div>
                 <div class="step-2" style="display:none;">
                     <div class="row level3">
-                        <div class="row">
-                            <h3 class="frm_pos_top frm_section_spacing">Level 3 Add-ons</h3>
+                        <div class="col-sm-12 text-center">
+                            <h3 class="frm_pos_top frm_section_spacing text-bold">Level 3 Add-ons</h3>
                             <div id="frm_field_189_container" class="frm_form_field frm_html_container form-field" style="color: #f8a000; font-weight: bold;">
                                 <p>Choose additional services individually to add to your level 3 RICS Building Survey.</p>
                             </div>
-                        </div>
-                        <div class="quote">
-                            <div class="quote_text addons">
+                            <span class="quote_text addons">
                                 Addons
-                            </div>
+                            </span>
                         </div>
+
                         <?php
                         // Get addon prices from settings
                         $breakdown_cost = isset($settings['breakdown-of-estimated-repair-costs']) ? $settings['breakdown-of-estimated-repair-costs'] : '300';
@@ -217,23 +216,8 @@ $level4_price = isset($settings['level-4']) ? $settings['level-4'] : '1024.07';
                                 <option value="1">Yes</option>
                             </select>
                         </div>
-                        <div class="col-md-6 addons hidethisfield" style="margin-top: 50px; display: block;">
-                            <label>Thermal images of perimter surfaces (visualise heatloss, thermal gain and saturation of building fabric) (£<?php echo esc_html($thermal_cost); ?>)</label>
-                            <select name="thermal_images" class="thermal_images form-control addon">
-                                <option value="0">No</option>
-                                <option value="1">Yes</option>
-                            </select>
-                        </div>
-                        <hr style="margin:20px;" class="addons">
-                        <div class="col-md-12 addons hidethisfield" style="display: block;">
-                            <p>Upgrade to Building Survey PLUS (level 3+)</p>
-                            <label>(Get all 4 add-ons with our level 3+ and save £240)</label>
-                            <select name="plus_package" class="plus_package form-control addon">
-                                <option value="0">No</option>
-                                <option value="1">Yes</option>
-                            </select>
-                        </div>
-                        <div class="level3-price level-price" style="margin-top: 20px;font-size: 18px;font-weight: bold;">£<?php echo esc_html($level3_price); ?></div>
+
+                        <div class="level3-price level-price addons">£<?php echo esc_html($level3_price); ?></div>
                         <div class="btn-style-group">
                             <div class="btn btn-primary level-3-confirm btn-style">Buy Now</div>
                             <div class="btn btn-primary back btn-style">Back</div>
