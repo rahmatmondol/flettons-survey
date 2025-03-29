@@ -2,12 +2,10 @@
 
 /**
  * Plugin Name: Flettons Survey Plugin
- * Plugin URI: https://flettons.com
  * Description: A comprehensive survey and quote system for RICS services
  * Version: 1.0.0
- * Author: Flettons Group
- * Author URI: https://flettons.com
- * Text Domain: flettons-survey
+ * Author: Rahmat Mondol
+ * Author URI: https://rahmatmondol.com
  */
 
 // Exit if accessed directly
@@ -95,6 +93,10 @@ function flettons_survey_activate()
         'flettons-payment-confirmation' => array(
             'title' => 'Confirmation',
             'content' => '[flettons_payment_confirmation]',
+        ),
+        'flettons-order' => array(
+            'title' => 'Order',
+            'content' => '[flettons_order]',
         ),
         'thank-you' => array(
             'title' => 'Thank You',

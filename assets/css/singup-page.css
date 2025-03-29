@@ -1,0 +1,130 @@
+body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: #1C1B37;
+    background-color: #ffffff;
+}
+
+form {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 30px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #fff;
+}
+
+h2 {
+    color: #1C1B37;
+    font-size: 20px;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #1C1B37;
+    padding-bottom: 8px;
+}
+
+.infusion-field {
+    margin-bottom: 20px;
+}
+
+.infusion-field label {
+    display: block;
+    font-weight: 600;
+    color: #1C1B37;
+    margin-bottom: 16px;
+}
+
+.infusion-field input[type="text"],
+.infusion-field input[type="email"],
+.infusion-field input[type="url"],
+.infusion-field input[type="tel"],
+.infusion-field input[type="date"],
+.infusion-field select,
+.infusion-field textarea {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 16px;
+    border: 0.5px solid #1C1B37;
+    border-radius: 4px;
+    color: #1C1B37;
+    background-color: #fff;
+    box-sizing: border-box;
+}
+
+.infusion-field textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.infusion-submit {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.infusion-submit button {
+    background-color: #1C1B37;
+    color: #ffffff;
+    padding: 14px 30px;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.infusion-submit button:hover {
+    background-color: #13122a;
+}
+
+/* Toggle switches */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    display: none;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #1C1B37;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked+.slider {
+    background-color: #91be10;
+}
+
+input:checked+.slider:before {
+    transform: translateX(26px);
+}
+
+/* Terms and Conditions Checkbox */
+#termsCheckbox {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#termsCheckbox input {
+    margin-right: 10px;
+}

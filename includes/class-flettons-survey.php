@@ -17,6 +17,7 @@ class Flettons_Survey
         add_shortcode('flettons_quote_form', array($this, 'quote_form_shortcode'));
         add_shortcode('flettons_listing_page', array($this, 'listing_page_shortcode'));
         add_shortcode('flettons_customer_signup', array($this, 'customer_sign_up_page_shortcode'));
+        add_shortcode('flettons_order', array($this, 'customer_order_page_shortcode'));
         add_shortcode('flettons_payment_confirmation', array($this, 'payment_confirmation_page_shortcode'));
 
         // Register AJAX handlers
@@ -43,6 +44,14 @@ class Flettons_Survey
         wp_register_style(
             'flettons-quote-form',
             FLETTONS_SURVEY_PLUGIN_URL . 'assets/css/quote-form.css',
+            array(),
+            FLETTONS_SURVEY_VERSION
+        );
+
+        // Register styles
+        wp_register_style(
+            'flettons-customer-signup-page',
+            FLETTONS_SURVEY_PLUGIN_URL . 'assets/css/signup-page.css',
             array(),
             FLETTONS_SURVEY_VERSION
         );
@@ -152,24 +161,47 @@ class Flettons_Survey
      */
     public function customer_sign_up_page_shortcode()
     {
-        // Enqueue the Google Places API
-        $api_key = $this->get_setting('api_keys_google_places');
-        if (!empty($api_key)) {
-            wp_enqueue_script(
-                'google-places-api',
-                'https://maps.googleapis.com/maps/api/js?key=' . $api_key . '&libraries=places',
-                array(),
-                null,
-                true
-            );
-        }
 
+        wp_enqueue_style('flettons-customer-signup-page');
         // Enqueue customer signup script
         wp_enqueue_script('flettons-customer-signup-js');
 
+        // Get quote ID from URL
+        $first_name = isset($_GET['first_name']) ? $_GET['first_name'] : '';
+        $last_name = isset($_GET['last_name']) ? $_GET['last_name'] : '';
+        $email = isset($_GET['email']) ? $_GET['email'] : '';
+        $phone = isset($_GET['phone']) ? $_GET['phone'] : '';
+        $address = isset($_GET['address']) ? $_GET['address'] : '';
+        $property_type = isset($_GET['property_type']) ? $_GET['property_type'] : '';
+        $bedrooms = isset($_GET['bedrooms']) ? $_GET['bedrooms'] : '';
+        $market_value = isset($_GET['market_value']) ? $_GET['market_value'] : '';
+        $total = isset($_GET['total']) ? $_GET['total'] : '0';
+        $level = isset($_GET['level']) ? $_GET['level'] : '2';
+
         ob_start();
-        include FLETTONS_SURVEY_PLUGIN_DIR . 'templates/customer-signup.php';
+        // include FLETTONS_SURVEY_PLUGIN_DIR . 'templates/customer-signup.php';
+        include FLETTONS_SURVEY_PLUGIN_DIR . 'templates/signup-page.php';
         return ob_get_clean();
+    }
+
+    /**
+     * customer order Page Shortcode
+     */
+    public function customer_order_page_shortcode()
+    {
+
+        //get parameters from URL
+        $contactId = isset($_GET['contactId']) ? $_GET['contactId'] : '';
+        $email = isset($_GET['inf_field_Email']) ? $_GET['inf_field_Email'] : '';
+        $qowte_data = get_transient('flettons_quote_' . $email);
+
+        $api = new Flettons_API();
+        $order_id = $api->create_order($contactId, $qowte_data);
+        $checkout = $api->create_stripe_checkout($qowte_data, $contactId, $order_id);
+        if ($checkout) {
+            wp_redirect($checkout);
+            exit;
+        }
     }
 
     /**
@@ -190,7 +222,7 @@ class Flettons_Survey
         $data = $this->sanitize_form_data($form_data);
 
         // Generate a unique quote ID
-        $quote_id = uniqid('quote_');
+        $quote_id = $form_data['email_address'];
 
         // Store data in transient (valid for 24 hours)
         set_transient('flettons_quote_' . $quote_id, $data, 24 * HOUR_IN_SECONDS);
