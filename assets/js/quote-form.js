@@ -83,7 +83,7 @@
             // Show loading message
             $("#quote-message")
                 .show()
-                .html('<div style="background:#f8f9fa; padding:10px; text-align:center;">Processing your request...</div>');
+                .html('<div style="padding:10px; text-align:center;">Processing your request...</div>');
 
             // Get form data
             const formData = $("#quoteForm").serialize();
@@ -117,7 +117,7 @@
                     } else {
                         // Show error message
                         $("#quote-message")
-                            .html('<div style="background:#f8d7da; color:#721c24; padding:10px; border-radius:4px;">' +
+                            .html('<div style="color:#721c24; padding:10px; border-radius:4px;">' +
                                 (response.data ? response.data.message : "An error occurred.") + '</div>');
 
                         // Re-enable buttons
@@ -128,7 +128,7 @@
                 error: function () {
                     // Show error message
                     $("#quote-message")
-                        .html('<div style="background:#f8d7da; color:#721c24; padding:10px; border-radius:4px;">' +
+                        .html('<div style="color:#721c24; padding:10px; border-radius:4px;">' +
                             "There was an error processing your request. Please try again." + '</div>');
 
                     // Re-enable buttons

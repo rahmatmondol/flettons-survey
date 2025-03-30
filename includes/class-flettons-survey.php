@@ -40,6 +40,10 @@ class Flettons_Survey
      */
     public function register_assets()
     {
+        $settings = get_option('flettons_survey_settings', array());
+
+        $google_maps_api_key = $this->get_setting('api_keys_google_places') ?? '';
+
         // Register styles
         wp_register_style(
             'flettons-quote-form',
@@ -70,6 +74,15 @@ class Flettons_Survey
             FLETTONS_SURVEY_PLUGIN_URL . 'assets/js/quote-form.js',
             array('jquery'),
             FLETTONS_SURVEY_VERSION,
+            true
+        );
+
+        // google maps
+        wp_register_script(
+            'google-maps',
+            'https://maps.googleapis.com/maps/api/js?key=' . $google_maps_api_key . '&libraries=places',
+            array('jquery'),
+            null,
             true
         );
 
@@ -116,6 +129,7 @@ class Flettons_Survey
         // Enqueue assets
         wp_enqueue_style('flettons-quote-form');
         wp_enqueue_script('flettons-quote-form-js');
+        wp_enqueue_script('google-maps');
 
         ob_start();
         include FLETTONS_SURVEY_PLUGIN_DIR . 'templates/quote-form.php';
@@ -148,10 +162,10 @@ class Flettons_Survey
         $contact_id = isset($_GET['contact_id']) ? $_GET['contact_id'] : '';
         $order_id = isset($_GET['order_id']) ? $_GET['order_id'] : '';
 
-        if (empty($amount) || empty($contact_id) || empty($order_id)) {
-            wp_redirect(site_url('/flettons-quote-form'));
-            exit;
-        }
+        // if (empty($amount) || empty($contact_id) || empty($order_id)) {
+        //     wp_redirect(site_url('/flettons-quote-form'));
+        //     exit;
+        // }
 
         $confirm = $api->handle_stripe_payment_confirmation($amount, $contact_id, $order_id);
     }
@@ -164,6 +178,7 @@ class Flettons_Survey
 
         wp_enqueue_style('flettons-customer-signup-page');
         // Enqueue customer signup script
+        wp_enqueue_script('google-maps');
         wp_enqueue_script('flettons-customer-signup-js');
 
         // Get quote ID from URL
@@ -181,6 +196,11 @@ class Flettons_Survey
         ob_start();
         // include FLETTONS_SURVEY_PLUGIN_DIR . 'templates/customer-signup.php';
         include FLETTONS_SURVEY_PLUGIN_DIR . 'templates/signup-page.php';
+        // $settings = get_option('flettons_survey_settings', array());
+        // echo '<pre>';
+        // print_r($settings);
+        // echo '</pre>';
+
         return ob_get_clean();
     }
 
@@ -200,6 +220,9 @@ class Flettons_Survey
         $checkout = $api->create_stripe_checkout($qowte_data, $contactId, $order_id);
         if ($checkout) {
             wp_redirect($checkout);
+            exit;
+        } else {
+            wp_redirect(site_url('/flettons-quote-form'));
             exit;
         }
     }

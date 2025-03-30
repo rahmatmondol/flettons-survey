@@ -41,9 +41,7 @@
     }
 </script>
 
-
-<form accept-charset="UTF-8" action="https://yh388.infusionsoft.com/app/form/process/59721e1c56b9dcc11498a070f37a2b12" class="infusion-form"
-    id="inf_form_59721e1c56b9dcc11498a070f37a2b12" method="POST">
+<form accept-charset="UTF-8" action="https://yh388.infusionsoft.com/app/form/process/59721e1c56b9dcc11498a070f37a2b12" class="infusion-form" id="inf_form_59721e1c56b9dcc11498a070f37a2b12" method="POST">
     <input name="inf_form_xid" type="hidden"
         value="59721e1c56b9dcc11498a070f37a2b12" />
     <input name="inf_form_name" type="hidden" value="CUSTOMER SIGN UP FORM 2" />
@@ -117,7 +115,7 @@
                 name="inf_custom_NumberofBedrooms" required>
                 <option value="">Please select one</option>
                 <option <?php if ($bedrooms === '1') echo 'selected'; ?> value="1">1</option>
-                <option  <?php if ($bedrooms === '2') echo 'selected'; ?> value="2">2</option>
+                <option <?php if ($bedrooms === '2') echo 'selected'; ?> value="2">2</option>
                 <option <?php if ($bedrooms === '3') echo 'selected'; ?> value="3">3</option>
                 <option <?php if ($bedrooms === '4') echo 'selected'; ?> value="4">4</option>
                 <option <?php if ($bedrooms === '5') echo 'selected'; ?> value="5">5</option>
@@ -277,7 +275,8 @@
         src="https://flettons.group/wp-content/uploads/2025/03/Flettons-Group-Terms.pdf"
         width="100%"
         height="400"
-        style="border: 0.5px solid #1C1B37; margin-top: 40px; margin-bottom: 40px;border-radius: 6px;"></iframe>
+        style="border: 0.5px solid #1C1B37; margin-top: 40px; margin-bottom: 40px;border-radius: 6px;">
+    </iframe>
     <!-- Terms Checkbox -->
     <div id="termsCheckbox" style="margin-top: 20px;">
         <input type="checkbox" id="termsCheckboxInput"
@@ -299,242 +298,263 @@
     <div class="infusion-submit">
         <button type="submit">Confirm and Pay</button>
     </div>
-    <!-- JavaScript to Control the Popup -->
-    <script type="text/javascript">
-        // Get the modal and link elements
-        const termsModal = document.getElementById('termsModal');
-        const viewTermsLink = document.getElementById('viewTermsLink');
-        const closeTermsModal = document.getElementById('closeTermsModal');
-        // Open the modal when the link is clicked
-        viewTermsLink.addEventListener('click', (event) => {
-            event.preventDefault(); // Prevent the link from navigating
-            termsModal.style.display = 'flex'; // Show the modal
-        });
-        // Close the modal when the close button is clicked
-        closeTermsModal.addEventListener('click', () => {
+
+</form>
+
+<!-- JavaScript to Control the Popup -->
+<script type="text/javascript">
+    // Get the modal and link elements
+    const termsModal = document.getElementById('termsModal');
+    const viewTermsLink = document.getElementById('viewTermsLink');
+    const closeTermsModal = document.getElementById('closeTermsModal');
+    // Open the modal when the link is clicked
+    viewTermsLink.addEventListener('click', (event) => {
+        event.preventDefault(); // Prevent the link from navigating
+        termsModal.style.display = 'flex'; // Show the modal
+    });
+    // Close the modal when the close button is clicked
+    closeTermsModal.addEventListener('click', () => {
+        termsModal.style.display = 'none'; // Hide the modal
+    });
+    // Close the modal when clicking outside the modal content
+    window.addEventListener('click', (event) => {
+        if (event.target === termsModal) {
             termsModal.style.display = 'none'; // Hide the modal
-        });
-        // Close the modal when clicking outside the modal content
-        window.addEventListener('click', (event) => {
-            if (event.target === termsModal) {
-                termsModal.style.display = 'none'; // Hide the modal
-            }
-        });
-    </script>
+        }
+    });
+</script>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA7xLp13hLBGIDOt4BIJZrJF99ItTsya0g&libraries=places"></script>
-    </script>
-    <script type="text/javascript">
-        function initializeAutocomplete() {
-            // Map address fields to their corresponding postcode fields
-            const addressFields = [{
-                    address: document.getElementById('inf_field_StreetAddress1'),
-                    postcode: document.getElementById('inf_field_PostalCode')
-                }, // Your Current Address
-                {
-                    address: document.getElementById('inf_field_Address2Street1'),
-                    postcode: document.getElementById('inf_field_PostalCode2')
-                }, // Survey Street Address 
-                {
-                    address: document.getElementById('inf_field_Address3Street1'),
-                    postcode: document.getElementById('inf_field_PostalCode3')
-                } // Agent Address
-            ];
-            // Apply autocomplete with UK restriction and postcode extraction for each address field
-            addressFields.forEach(fieldPair => {
-                if (fieldPair.address) {
-                    const autocomplete = new
-                    google.maps.places.Autocomplete(fieldPair.address, {
-                        types: ['address'],
-                        componentRestrictions: {
-                            country: 'gb'
-                        } // Restrict to UK
-                    });
-                    // Set the fields to get address components
-                    autocomplete.setFields(['formatted_address', 'address_components']);
-                    // Update the input fields with the formatted address and postcode
-                    autocomplete.addListener('place_changed', function() {
-                        const place = autocomplete.getPlace();
-                        if (place.formatted_address) {
-                            // Remove "United Kingdom" from the formatted address
-                            let formattedAddress = place.formatted_address.replace(/,\s*United Kingdom$ /, '').replace(/,\s*UK$/, '');
-                            fieldPair.address.value = formattedAddress;
-                            // Extract postcode from address components
-                            const postcodeComponent =
-                                place.address_components.find(component =>
-                                    component.types.includes("postal_code"));
-                            if (postcodeComponent && fieldPair.postcode) {
-                                fieldPair.postcode.value = postcodeComponent.long_name;
-                            }
+<script type="text/javascript">
+    function initializeAutocomplete() {
+        // Map address fields to their corresponding postcode fields
+        const addressFields = [{
+                address: document.getElementById('inf_field_StreetAddress1'),
+                postcode: document.getElementById('inf_field_PostalCode')
+            }, // Your Current Address
+            {
+                address: document.getElementById('inf_field_Address2Street1'),
+                postcode: document.getElementById('inf_field_PostalCode2')
+            }, // Survey Street Address
+            {
+                address: document.getElementById('inf_field_Address3Street1'),
+                postcode: document.getElementById('inf_field_PostalCode3')
+            } // Agent Address
+        ];
+        // Apply autocomplete with UK restriction and postcode extraction for each address field
+        addressFields.forEach(fieldPair => {
+            console.log(fieldPair.address, fieldPair.postcode); // Debugging line
+            if (fieldPair.address) {
+                const autocomplete = new
+                google.maps.places.Autocomplete(fieldPair.address, {
+                    types: ['address'],
+                    componentRestrictions: {
+                        country: 'uk'
+                    } // Restrict to UK with correct lowercase code
+                });
+                // Set the fields to get address components
+                autocomplete.setFields(['formatted_address', 'address_components']);
+                // Update the input fields with the formatted address and postcode
+                autocomplete.addListener('place_changed', function() {
+                    const place = autocomplete.getPlace();
+                    if (place.formatted_address) {
+                        // Remove "United Kingdom" from the formatted address (fixed regex)
+                        let formattedAddress = place.formatted_address.replace(/,\s*United Kingdom$/, '').replace(/,\s*UK$/, '');
+                        fieldPair.address.value = formattedAddress;
+                        // Extract postcode from address components
+                        const postcodeComponent =
+                            place.address_components.find(component =>
+                                component.types.includes("postal_code"));
+                        if (postcodeComponent && fieldPair.postcode) {
+                            fieldPair.postcode.value = postcodeComponent.long_name;
                         }
-                    });
-                }
-            });
-        }
-        // Initialize autocomplete on page load
-        window.onload = initializeAutocomplete;
-    </script>
-    <script type="text/javascript">
-        // Function to format telephone numbers
-        function formatTelephoneNumber(input) {
-            let value = input.value.trim(); // Get the trimmed value of the input
-            // Check if the number starts with a zero
-            if (value.startsWith('0')) {
-                // Replace the first zero with '+44'
-                value = '+44' + value.slice(1);
+                    }
+
+
+                });
             }
-            // Update the input value
-            input.value = value;
+        });
+    }
+    // Initialize autocomplete on page load
+    window.onload = initializeAutocomplete;
+</script>
+<script type="text/javascript">
+    // Function to format telephone numbers
+    function formatTelephoneNumber(input) {
+        let value = input.value.trim(); // Get the trimmed value of the input
+        // Check if the number starts with a zero
+        if (value.startsWith('0')) {
+            // Replace the first zero with '+44'
+            value = '+44' + value.slice(1);
         }
-        // Attach the formatting function to telephone fields
-        function attachTelephoneFormatting() {
-            const telephoneFields = [
-                document.getElementById('inf_field_Phone1'), // Client Phone
-                document.getElementById('inf_custom_SolicitorPhone'), // Solicitor Phone
-                document.getElementById('inf_custom_AgentPhoneNumber') // Agent Phone
-            ];
-            telephoneFields.forEach(field => {
-                if (field) {
-                    field.addEventListener('blur', () => formatTelephoneNumber(field));
-                }
-            });
-        }
-        // Initialize telephone formatting on page load
-        window.onload = function() {
-            initializeAutocomplete(); // Initialize address autocomplete
-            attachTelephoneFormatting(); // Attach telephone formatting
-        };
-    </script>
+        // Update the input value
+        input.value = value;
+    }
+    // Attach the formatting function to telephone fields
+    function attachTelephoneFormatting() {
+        const telephoneFields = [
+            document.getElementById('inf_field_Phone1'), // Client Phone
+            document.getElementById('inf_custom_SolicitorPhone'), // Solicitor Phone
+            document.getElementById('inf_custom_AgentPhoneNumber') // Agent Phone
+        ];
+        telephoneFields.forEach(field => {
+            if (field) {
+                field.addEventListener('blur', () => formatTelephoneNumber(field));
+            }
+        });
+    }
+    // Initialize telephone formatting on page load
+    window.onload = function() {
+        initializeAutocomplete(); // Initialize address autocomplete
+        attachTelephoneFormatting(); // Attach telephone formatting
+    };
+</script>
 
-    <style>
-        body {
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            color: #1C1B37;
-            background-color: #ffffff;
-        }
+<style>
+    body {
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        color: #1C1B37;
+        background-color: #ffffff;
+    }
 
-        form {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 30px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            background: #fff;
-        }
+    form {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 30px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background: #fff;
+    }
 
-        h2 {
-            color: #1C1B37;
-            font-size: 20px;
-            margin-top: 40px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #1C1B37;
-            padding-bottom: 8px;
-        }
+    h2 {
+        color: #1C1B37;
+        font-size: 20px;
+        margin-top: 40px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #1C1B37;
+        padding-bottom: 8px;
+    }
 
-        .infusion-field {
-            margin-bottom: 20px;
-        }
+    .infusion-field {
+        margin-bottom: 20px;
+    }
 
-        .infusion-field label {
-            display: block;
-            font-weight: 600;
-            color: #1C1B37;
-            margin-bottom: 16px;
-        }
+    .infusion-field label {
+        display: block;
+        font-weight: 600;
+        color: #1C1B37;
+        margin-bottom: 16px;
+    }
 
-        .infusion-field input[type="text"],
-        .infusion-field input[type="email"],
-        .infusion-field input[type="url"],
-        .infusion-field input[type="tel"],
-        .infusion-field input[type="date"],
-        .infusion-field select,
-        .infusion-field textarea {
-            width: 100%;
-            padding: 12px 14px;
-            font-size: 16px;
-            border: 0.5px solid #1C1B37;
-            border-radius: 4px;
-            color: #1C1B37;
-            background-color: #fff;
-            box-sizing: border-box;
-        }
+    .infusion-field input[type="text"],
+    .infusion-field input[type="email"],
+    .infusion-field input[type="url"],
+    .infusion-field input[type="tel"],
+    .infusion-field input[type="date"],
+    .infusion-field select,
+    .infusion-field textarea {
+        width: 100%;
+        padding: 12px 14px;
+        font-size: 16px;
+        border: 0.5px solid #1C1B37;
+        border-radius: 4px;
+        color: #1C1B37;
+        background-color: #fff;
+        box-sizing: border-box;
+    }
 
-        .infusion-field textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
+    .infusion-field textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
 
-        .infusion-submit {
-            text-align: center;
-            margin-top: 40px;
-        }
+    .infusion-submit {
+        text-align: center;
+        margin-top: 40px;
+    }
 
-        .infusion-submit button {
-            background-color: #1C1B37;
-            color: #ffffff;
-            padding: 14px 30px;
-            font-size: 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
+    .infusion-submit button {
+        background-color: #1C1B37;
+        color: #ffffff;
+        padding: 14px 30px;
+        font-size: 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
 
-        .infusion-submit button:hover {
-            background-color: #13122a;
-        }
+    .infusion-submit button:hover {
+        background-color: #13122a;
+    }
 
-        /* Toggle switches */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-        }
+    /* Toggle switches */
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
 
-        .switch input {
-            display: none;
-        }
+    .switch input {
+        display: none;
+    }
 
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #1C1B37;
-            transition: 0.4s;
-            border-radius: 34px;
-        }
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #1C1B37;
+        transition: 0.4s;
+        border-radius: 34px;
+    }
 
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: 0.4s;
-            border-radius: 50%;
-        }
+    .slider:before {
+        position: absolute;
+        content: "No";
+        height: 26px;
+        width: 26px;
+        left: 1px;
+        bottom: 4px;
+        background-color: white;
+        color: black;
+        text-align: center;
+        line-height: 26px;
+        font-size: 12px;
+        border-radius: 50%;
+        transition: .4s;
+    }
 
-        input:checked+.slider {
-            background-color: #91be10;
-        }
+    .switch input:checked+.slider {
+        background-color: #8dc63f;
+    }
 
-        input:checked+.slider:before {
-            transform: translateX(26px);
-        }
+    .switch input:checked+.slider:before {
+        transform: translateX(50px);
+        content: "Yes";
+        color: white;
+        background-color: #292856;
+        left: -18px;
+    }
 
-        /* Terms and Conditions Checkbox */
-        #termsCheckbox {
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
 
-        #termsCheckbox input {
-            margin-right: 10px;
-        }
-    </style>
+    input:checked+.slider {
+        background-color: #91be10;
+    }
+
+    input:checked+.slider:before {
+        transform: translateX(26px);
+    }
+
+    /* Terms and Conditions Checkbox */
+    #termsCheckbox {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    #termsCheckbox input {
+        margin-right: 10px;
+    }
+</style>

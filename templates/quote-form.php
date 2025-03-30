@@ -32,7 +32,7 @@ if (!defined('ABSPATH')) {
                 </div>
             </div>
             <div>
-                <input type="text" name="full_address" placeholder="Property Address" required>
+                <input type="text" id="full_address" name="full_address" placeholder="Property Address" required>
             </div>
             <div class="form-row">
                 <div>
@@ -109,3 +109,40 @@ if (!defined('ABSPATH')) {
         Powered by Flettons Group
     </div>
 </div>
+
+<script type="text/javascript">
+    function initializeAutocomplete() {
+        // Map address fields to their corresponding postcode fields
+        const addressFields = [{
+                address: document.getElementById('full_address'),
+            }, // Your Current Address
+        ];
+        // Apply autocomplete with UK restriction and postcode extraction for each address field
+        addressFields.forEach(fieldPair => {
+            if (fieldPair.address) {
+                const autocomplete = new
+                google.maps.places.Autocomplete(fieldPair.address, {
+                    types: ['address'],
+                    componentRestrictions: {
+                        country: 'uk'
+                    } // Restrict to UK with correct lowercase code
+                });
+                // Set the fields to get address components
+                autocomplete.setFields(['formatted_address']);
+                // Update the input fields with the formatted address and postcode
+                autocomplete.addListener('place_changed', function() {
+                    const place = autocomplete.getPlace();
+                    if (place.formatted_address) {
+                        // Remove "United Kingdom" from the formatted address (fixed regex)
+                        let formattedAddress = place.formatted_address.replace(/,\s*United Kingdom$/, '').replace(/,\s*UK$/, '');
+                        fieldPair.address.value = formattedAddress;
+                    }
+
+
+                });
+            }
+        });
+    }
+    // Initialize autocomplete on page load
+    window.onload = initializeAutocomplete;
+</script>
