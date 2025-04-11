@@ -42,43 +42,10 @@
             };
         }
 
-        // Form submission
+        // Proceed button - Store data and redirect to listing page
         $("#quoteForm").on("submit", function (e) {
             e.preventDefault();
-
-            // Validate form
-            if (!$(this)[0].checkValidity()) {
-                $(this)[0].reportValidity();
-                return;
-            }
-
-            // Calculate pricing
-            const pricing = calculateQuote();
-            $("#total").val(pricing.total.toFixed(2));
-
-            // Show pricing summary
-            $("#quoteDetails").html(`
-                <p><strong>Base Survey Cost:</strong> £${pricing.base.toFixed(2)}</p>
-                <p><strong>Additional Options:</strong> £${pricing.additional.toFixed(2)}</p>
-                <p style="font-size:1.2em; font-weight:bold; margin-top:10px; border-top:1px solid #ddd; padding-top:10px;">
-                    Total: £${pricing.total.toFixed(2)}
-                </p>
-            `);
-
-            $("#quoteForm").hide();
-            $("#quoteSummary").show();
-        });
-
-        // Back button
-        $("#backBtn").on("click", function () {
-            $("#quoteSummary").hide();
-            $("#quoteForm").show();
-        });
-
-        // Proceed button - Store data and redirect to listing page
-        $("#proceedBtn").on("click", function () {
             $(this).prop("disabled", true).text("Processing...");
-            $("#backBtn").prop("disabled", true);
 
             // Show loading message
             $("#quote-message")
@@ -87,6 +54,7 @@
 
             // Get form data
             const formData = $("#quoteForm").serialize();
+
 
             // Send AJAX request to store quote data temporarily
             $.ajax({
@@ -113,7 +81,9 @@
                             quote_id: response.data.quote_id
                         });
 
-                        window.location.href = redirectUrl;
+                        console.log("Redirecting to: " + redirectUrl);
+
+                        // window.location.href = redirectUrl;
                     } else {
                         // Show error message
                         $("#quote-message")

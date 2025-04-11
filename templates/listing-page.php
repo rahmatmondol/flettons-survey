@@ -10,12 +10,25 @@ $level1_price = isset($settings['level-1']) ? $settings['level-1'] : '349.00';
 $level2_price = isset($settings['level-2']) ? $settings['level-2'] : '499.38';
 $level3_price = isset($settings['level-3']) ? $settings['level-3'] : '611.73';
 $level4_price = isset($settings['level-4']) ? $settings['level-4'] : '1024.07';
+
 ?>
 
 <div class="container">
     <form class="quote-f" action="">
         <div class="form1" style="display: none;">
             <div class="g-recaptcha" data-sitekey="<?php echo esc_attr($settings['api_keys']['recaptcha'] ?? ''); ?>"></div>
+            <input type="hidden" id="pricing-data"
+                data-mv-percent-1="<?php echo esc_attr(isset($settings['market-value-percentage']) ? $settings['market-value-percentage'] : '0.0003'); ?>"
+                data-mv-percent-2="<?php echo esc_attr(isset($settings['market-value-percentage-2']) ? $settings['market-value-percentage-2'] : '0.0004'); ?>"
+                data-mv-percent-3="<?php echo esc_attr(isset($settings['market-value-percentage-3']) ? $settings['market-value-percentage-3'] : '0.0005'); ?>"
+                data-mv-percent-4="<?php echo esc_attr(isset($settings['market-value-percentage-4']) ? $settings['market-value-percentage-4'] : '0.0006'); ?>"
+                data-base-1="<?php echo esc_attr($level1_price); ?>"
+                data-base-2="<?php echo esc_attr($level2_price); ?>"
+                data-base-3="<?php echo esc_attr($level3_price); ?>"
+                data-base-4="<?php echo esc_attr($level4_price); ?>"
+                data-bedroom-cost="<?php echo esc_attr(isset($settings['number-of-bedrooms']) ? $settings['number-of-bedrooms'] : '50'); ?>"
+                data-listed-cost="<?php echo esc_attr(isset($settings['listed-building']) ? $settings['listed-building'] : '300'); ?>"
+                data-extended-cost="<?php echo esc_attr(isset($settings['extended']) ? $settings['extended'] : '150'); ?>">
             <div class="quote">
                 <div class="quote_text">
                     Get your quotes
@@ -35,13 +48,13 @@ $level4_price = isset($settings['level-4']) ? $settings['level-4'] : '1024.07';
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="exampleInputEmail1">First Name</label>
-                        <input type="text" class="form-control" name="first_name" required="">
+                        <input type="text" class="form-control first_name" name="first_name" required="">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="exampleInputEmail1">Last Name</label>
-                        <input type="text" class="form-control" name="last_name" required="">
+                        <input type="text" class="form-control last_name" name="last_name" required="">
                     </div>
                 </div>
             </div>
@@ -78,8 +91,13 @@ $level4_price = isset($settings['level-4']) ? $settings['level-4'] : '1024.07';
                     <div class="form-group">
                         <label for="exampleInputEmail1">House or Flat</label>
                         <select class="form-control house_or_flat" name="house_or_flat">
-                            <option value="house">House</option>
-                            <option value="flat">Flat</option>
+                            <option value="">House or Flat</option>
+                            <option>House</option>
+                            <option>Flat</option>
+                            <option>Maisonette</option>
+                            <option>Barn Conversion</option>
+                            <option>Warehouse Conversion</option>
+                            <option>Other</option>
                         </select>
                     </div>
                 </div>
@@ -95,6 +113,8 @@ $level4_price = isset($settings['level-4']) ? $settings['level-4'] : '1024.07';
                             <option value="6">6</option>
                             <option value="7">7</option>
                             <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
                         </select>
                     </div>
                 </div>

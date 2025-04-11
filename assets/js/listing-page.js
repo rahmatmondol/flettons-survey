@@ -18,6 +18,8 @@ jQuery(document).ready(function ($) {
         quote_id: urlParams.get('quote_id') || ''
     };
 
+    console.log('Query Data:', queryData);
+
     // Populate form fields with data from URL if available
     if (queryData.first_name) $('.first_name').val(queryData.first_name);
     if (queryData.last_name) $('.last_name').val(queryData.last_name);

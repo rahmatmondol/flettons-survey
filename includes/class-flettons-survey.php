@@ -128,8 +128,12 @@ class Flettons_Survey
     {
         // Enqueue assets
         wp_enqueue_style('flettons-quote-form');
-        wp_enqueue_script('flettons-quote-form-js');
+        // wp_enqueue_script('flettons-quote-form-js');
         wp_enqueue_script('google-maps');
+
+        $listinsg_fee = $this->get_setting('listinsg-fee') ?? 0;
+        $extra_sqft = $this->get_setting('extra-sqft') ?? 0;
+        $extra_rooms = $this->get_setting('extra-rooms') ?? 0;
 
         ob_start();
         include FLETTONS_SURVEY_PLUGIN_DIR . 'templates/quote-form.php';
@@ -232,20 +236,25 @@ class Flettons_Survey
      */
     public function store_temp_quote_data()
     {
-        // Check nonce for security
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'flettons_quote_form_nonce')) {
-            wp_send_json_error(array('message' => 'Security check failed'));
-        }
-
         // Parse the form data
         $form_data = array();
-        parse_str($_POST['form_data'], $form_data);
+        parse_str($_POST['formData'], $form_data);
 
         // Sanitize and validate data
         $data = $this->sanitize_form_data($form_data);
 
+        $api = new Flettons_API();
+        // Validate the data
+
         // Generate a unique quote ID
-        $quote_id = $form_data['email_address'];
+        $quote_id = $api->create_contact($data);
+
+        if (!$quote_id) {
+            wp_send_json_error(array('message' => 'Failed to create contact'));
+            return;
+        }
+        // apply tags
+        $api->apply_tags($quote_id, 643);
 
         // Store data in transient (valid for 24 hours)
         set_transient('flettons_quote_' . $quote_id, $data, 24 * HOUR_IN_SECONDS);

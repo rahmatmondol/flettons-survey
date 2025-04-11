@@ -64,6 +64,8 @@ function flettons_survey_activate()
         'aerial-roof-and-chimney' => 200,
         'insurance-reinstatement-valuation' => 200,
         'thermal-images' => 250,
+        'listinsg-fee' => 250,
+        'extra-sqft' => 250,
         'api_keys' => array(
             'keap' => '',
             'stripe' => '',

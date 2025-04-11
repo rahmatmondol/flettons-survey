@@ -73,7 +73,10 @@ class Flettons_Admin
             'breakdown-of-estimated-repair-costs' => 'Repair Costs Breakdown Cost',
             'aerial-roof-and-chimney' => 'Aerial Roof and Chimney Cost',
             'insurance-reinstatement-valuation' => 'Insurance Reinstatement Valuation Cost',
-            'thermal-images' => 'Thermal Images Cost'
+            'thermal-images' => 'Thermal Images Cost',
+            'listinsg-fee' => 'Listing Fee Cost',
+            'extra-sqft' => 'Extra Sqft Cost',
+            'extra-rooms' => 'Extra Rooms Cost'
         );
 
         foreach ($pricing_fields as $id => $label) {

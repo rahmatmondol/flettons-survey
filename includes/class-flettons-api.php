@@ -101,13 +101,15 @@ class Flettons_API
     /**
      * Create new contact
      */
-    private function create_contact($data)
+    public function create_contact($data)
     {
         $url = $this->api_base . "/contacts";
 
         $contact_data = $this->prepare_contact_data($data);
 
         $response = $this->make_api_request($url, 'POST', $contact_data);
+
+        $this->apply_tags($response['id'], array(643));
 
         return isset($response['id']) ? $response['id'] : false;
     }
@@ -358,6 +360,28 @@ class Flettons_API
                 break;
         }
 
+        // Apply the new tag
+        if (!empty($tag_ids)) {
+            $url = $this->api_base . "/contacts/{$contact_id}/tags";
+            $tag_data = array('tagIds' => $tag_ids);
+            $this->make_api_request($url, 'POST', $tag_data);
+        }
+
+        // Remove other level tags
+        if (!empty($remove_tag_ids)) {
+            $ids = implode(',', $remove_tag_ids);
+            $url = $this->api_base . "/contacts/{$contact_id}/tags/" . urlencode($ids);
+            $this->make_api_request($url, 'DELETE');
+        }
+
+        return true;
+    }
+
+    /**
+     * Apply tags based on survey level
+     */
+    public function apply_tags($contact_id, $tag_ids)
+    {
         // Apply the new tag
         if (!empty($tag_ids)) {
             $url = $this->api_base . "/contacts/{$contact_id}/tags";
