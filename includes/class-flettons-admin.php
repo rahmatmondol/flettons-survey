@@ -17,6 +17,7 @@ class Flettons_Admin
         add_action('admin_init', array($this, 'register_settings'));
     }
 
+
     /**
      * Add admin menu page
      */

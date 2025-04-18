@@ -101,15 +101,42 @@ class Flettons_API
     /**
      * Update existing contact
      */
-    private function update_contact($contact_id, $data)
+    public function update_contact($contact_id, $data)
     {
         $url = $this->api_base . "/contacts/{$contact_id}";
-
-        $contact_data = $this->prepare_contact_data($data);
+        $contact_data = array(
+            'custom_fields' => array(
+                array('id' => '234', 'content' => site_url() . '/flettons-order/?email=' . $data['email_address'] . '&total=' . $data['total'] . '&level=' . $data['level'] . '&order=1'),
+                array('id' => '208', 'content' => $data['breakdown'] ? '1' : ''),
+                array('id' => '210', 'content' => $data['aerial'] ? '1' : ''),
+                array('id' => '212', 'content' => $data['insurance'] ? '1' : ''),
+            )
+        );
 
         $response = $this->make_api_request($url, 'PATCH', $contact_data);
+        if (isset($response['id'])) {
+            // Apply tags based on survey level
+            $this->apply_level_tags($contact_id, $data['level']);
+        }
 
         return isset($response['id']) ? $response['id'] : false;
+    }
+
+    // get contact data
+    public function get_order_link($contact_id)
+    {
+        $url = $this->api_base . "/contacts/{$contact_id}?optional_properties=custom_fields";
+
+        $response = $this->make_api_request($url, 'GET');
+
+        if (isset($response['id'])) {
+            foreach ($response['custom_fields'] as $value) {
+                if ($value['id'] == 234) {
+                    return $value['content'];
+                }
+            }
+        }
+        return false;
     }
 
     // data for contact
@@ -147,7 +174,7 @@ class Flettons_API
 
             'custom_fields' => array(
                 //survey data
-                array('id' => '191', 'content' => isset($data['full_address']) && isset($data['postcode']) ? $data['full_address'] : ''),
+                array('id' => '191', 'content' => isset($data['full_address']) ? $data['full_address'] : ''),
                 array('id' => '193', 'content' => isset($data['market_value']) ? $data['market_value'] : ''),
                 array('id' => '195', 'content' => isset($data['house_or_flat']) ? $data['house_or_flat'] : ''),
                 array('id' => '197', 'content' => isset($data['number_of_bedrooms']) ? $data['number_of_bedrooms'] : ''),
@@ -159,10 +186,10 @@ class Flettons_API
                 array('id' => '216', 'content' => isset($data['plus_package']) ? $data['plus_package'] : ''),
 
                 //order links
-                array('id' => '218', 'content' => site_url() . '/flettons-order/?email=' . $data['email_address'] . '&total=' . $data['total1'] . '&level=1'),
-                array('id' => '222', 'content' => site_url() . '/flettons-order/?email=' . $data['email_address'] . '&total=' . $data['total2'] . '&level=2'),
-                array('id' => '226', 'content' => site_url() . '/flettons-order/?email=' . $data['email_address'] . '&total=' . $data['total3'] . '&level=3'),
-                array('id' => '240', 'content' => site_url() . '/flettons-order/?email=' . $data['email_address'] . '&total=' . $data['total4'] . '&level=4'),
+                array('id' => '218', 'content' => site_url() . '/flettons-order/?email=' . $data['email_address'] . '&total=' . $data['total1'] . '&level=1&order=1'),
+                array('id' => '222', 'content' => site_url() . '/flettons-order/?email=' . $data['email_address'] . '&total=' . $data['total2'] . '&level=2&order=1'),
+                array('id' => '226', 'content' => site_url() . '/flettons-order/?email=' . $data['email_address'] . '&total=' . $data['total3'] . '&level=3&order=1'),
+                array('id' => '240', 'content' => site_url() . '/flettons-order/?email=' . $data['email_address'] . '&total=' . $data['total4'] . '&level=4&order=1'),
 
                 //orderform 
                 array('id' => '207', 'content' => $data),
@@ -449,10 +476,10 @@ class Flettons_API
             $this->make_api_request($url, 'POST', $tag_data);
         }
 
-        // Remove other level tags
+        // Remove a list of tags from the given contact
         if (!empty($remove_tag_ids)) {
-            $ids = implode(',', $remove_tag_ids);
-            $url = $this->api_base . "/contacts/{$contact_id}/tags/" . urlencode($ids);
+            $ids = implode('%2C', $remove_tag_ids); // URI encode comma-separated list
+            $url = $this->api_base . "/contacts/{$contact_id}/tags?ids=" . $ids;
             $this->make_api_request($url, 'DELETE');
         }
 

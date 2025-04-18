@@ -61,25 +61,25 @@
     <div class="infusion-field">
         <label for="inf_field_FirstName">First Name *</label>
         <input type="text" id="inf_field_FirstName" name="inf_field_FirstName"
-            required value="<?php echo esc_attr($first_name); ?>" />
+            required value="<?php echo esc_attr($quote_data['first_name'] ?? ''); ?>" />
     </div>
     <div class="infusion-field">
         <label for="inf_field_LastName">Last Name *</label>
         <input type="text" id="inf_field_LastName" name="inf_field_LastName"
-            required value="<?php echo esc_attr($last_name); ?>" />
+            required value="<?php echo esc_attr($quote_data['last_name'] ?? ''); ?>" />
     </div>
     <div class="infusion-field">
         <label for="inf_field_Email">Email *</label>
-        <input type="email" id="inf_field_Email" name="inf_field_Email" required value="<?php echo esc_attr($email); ?>" />
+        <input type="email" id="inf_field_Email" name="inf_field_Email" required value="<?php echo esc_attr($quote_data['email_address'] ?? ''); ?>" />
     </div>
     <div class="infusion-field">
         <label for="inf_field_Phone1">Phone</label>
-        <input type="tel" id="inf_field_Phone1" name="inf_field_Phone1" value="<?php echo esc_attr($phone); ?>" />
+        <input type="tel" id="inf_field_Phone1" name="inf_field_Phone1" value="<?php echo esc_attr($quote_data['telephone_number'] ?? ''); ?>" />
     </div>
     <div class="infusion-field">
         <label for="inf_field_StreetAddress1">Your Home Address *</label>
         <input type="text" id="inf_field_StreetAddress1"
-            name="inf_field_StreetAddress1" required value="<?php echo esc_attr($address); ?>" />
+            name="inf_field_StreetAddress1" required value="" />
     </div>
     <div class="infusion-field">
         <label for="inf_field_PostalCode">Your Postcode *</label>
@@ -90,7 +90,7 @@
     <div class="infusion-field">
         <label for="inf_field_Address2Street1">Survey Street Address *</label>
         <input type="text" id="inf_field_Address2Street1"
-            name="inf_field_Address2Street1" required />
+            name="inf_field_Address2Street1" value="<?php echo esc_attr($quote_data['full_address'] ?? ''); ?>" required />
     </div>
     <div class="infusion-field">
         <label for="inf_field_PostalCode2">Survey Postal Code *</label>
@@ -102,10 +102,12 @@
         <select id="inf_custom_PropertyType" name="inf_custom_PropertyType"
             required>
             <option value="">Please select one</option>
-            <option <?php if ($property_type === 'Detached') echo 'selected'; ?> value="Detached">Detached</option>
-            <option <?php if ($property_type === 'Semi Detached') echo 'selected'; ?> value="Semi Detached">Semi Detached</option>
-            <option <?php if ($property_type === 'Terraced') echo 'selected'; ?> value="Terraced">Terraced</option>
-            <option <?php if ($property_type === 'Flat') echo 'selected'; ?> value="Flat">Flat</option>
+            <option <?php if ($quote_data['house_or_flat'] === 'House') echo 'selected'; ?> value="House">House</option>
+            <option <?php if ($quote_data['house_or_flat'] === 'Flat') echo 'selected'; ?> value="Flat">Flat</option>
+            <option <?php if ($quote_data['house_or_flat'] === 'Maisonette') echo 'selected'; ?> value="Maisonette">Maisonette</option>
+            <option <?php if ($quote_data['house_or_flat'] === 'Barn Conversion') echo 'selected'; ?> value="Barn Conversion">Barn Conversion</option>
+            <option <?php if ($quote_data['house_or_flat'] === 'Warehouse Conversion') echo 'selected'; ?> value="Warehouse Conversion">Warehouse Conversion</option>
+            <option <?php if ($quote_data['house_or_flat'] === 'Other') echo 'selected'; ?> value="Other">Other</option>
         </select>
     </div>
     <div class="infusion-field">
@@ -114,11 +116,12 @@
             <select id="inf_custom_NumberofBedrooms"
                 name="inf_custom_NumberofBedrooms" required>
                 <option value="">Please select one</option>
-                <option <?php if ($bedrooms === '1') echo 'selected'; ?> value="1">1</option>
-                <option <?php if ($bedrooms === '2') echo 'selected'; ?> value="2">2</option>
-                <option <?php if ($bedrooms === '3') echo 'selected'; ?> value="3">3</option>
-                <option <?php if ($bedrooms === '4') echo 'selected'; ?> value="4">4</option>
-                <option <?php if ($bedrooms === '5') echo 'selected'; ?> value="5">5</option>
+                <?php
+                for ($i = 1; $i <= 10; $i++) {
+                    $selected = $quote_data['number_of_bedrooms'] === $i ? 'selected' : '';
+                    echo "<option $selected value='$i'>$i</option>";
+                }
+                ?>
             </select>
     </div>
     <div class="infusion-field">

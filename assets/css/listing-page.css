@@ -143,3 +143,7 @@ div#html_element>div {
     background: #f39200;
     border-color: #f39200;
 }
+
+.btn.btn-primary {
+    text-decoration: none;
+}

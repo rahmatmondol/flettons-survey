@@ -160,6 +160,7 @@ class Flettons_Survey
 
         // Get quote data from transient
         $quote_data = get_transient('flettons_temp_quote_' . $contact_id);
+        $settings = get_option('flettons_survey_settings', array());
 
         if (empty($quote_data)) {
             wp_redirect(site_url('/flettons-quote-form'));
@@ -206,24 +207,55 @@ class Flettons_Survey
         wp_enqueue_script('google-maps');
         wp_enqueue_script('flettons-customer-signup-js');
 
-        // Get quote ID from URL
-        $first_name = isset($_GET['first_name']) ? $_GET['first_name'] : '';
-        $last_name = isset($_GET['last_name']) ? $_GET['last_name'] : '';
-        $email = isset($_GET['email']) ? $_GET['email'] : '';
-        $phone = isset($_GET['phone']) ? $_GET['phone'] : '';
-        $address = isset($_GET['address']) ? $_GET['address'] : '';
-        $property_type = isset($_GET['property_type']) ? $_GET['property_type'] : '';
-        $bedrooms = isset($_GET['bedrooms']) ? $_GET['bedrooms'] : '';
-        $market_value = isset($_GET['market_value']) ? $_GET['market_value'] : '';
-        $total = isset($_GET['total']) ? $_GET['total'] : '0';
-        $level = isset($_GET['level']) ? $_GET['level'] : '2';
+        $contactId = isset($_GET['contact_id']) ? $_GET['contact_id'] : null;
+        $email = isset($_GET['email']) ? $_GET['email'] : null;
+        $lavel = isset($_GET['level']) ? $_GET['level'] : null;
+        $total = isset($_GET['total']) ? $_GET['total'] : null;
+        $breakdown = isset($_GET['breakdown']) ? true : false;
+        $aerial = isset($_GET['aerial']) ? true : false;
+        $insurance = isset($_GET['insurance']) ? true : false;
+
+        $quote_data = get_transient('flettons_temp_quote_' . $contactId);
+
+        if (empty($quote_data)) {
+            wp_redirect(site_url('/flettons-quote-form'));
+            exit;
+        }
+
+        $api = new Flettons_API();
+
+        if ($email !== null && $lavel !== null && $total !== null && $contactId !== null) {
+            $data = array(
+                'email_address' => $email,
+                'level' => $lavel,
+                'total' => $total,
+                'breakdown' => $breakdown,
+                'aerial' => $aerial,
+                'insurance' => $insurance,
+            );
+
+            // update contact
+            $contact = $api->update_contact($contactId, $data);
+
+            if (empty($contact)) {
+                wp_redirect(site_url('/flettons-listing-page?contact_id=' . $contactId));
+                exit;
+            }
+            //update tags
+            $result = $api->apply_level_tags($contactId, $lavel);
+            if (!$result) {
+                wp_redirect(site_url('/flettons-listing-page?contact_id=' . $contactId));
+                exit;
+            }
+        }
+
 
         ob_start();
         // include FLETTONS_SURVEY_PLUGIN_DIR . 'templates/customer-signup.php';
         include FLETTONS_SURVEY_PLUGIN_DIR . 'templates/signup-page.php';
         // $settings = get_option('flettons_survey_settings', array());
         // echo '<pre>';
-        // print_r($settings);
+        // print_r($quote_data);
         // echo '</pre>';
 
         return ob_get_clean();
@@ -234,21 +266,21 @@ class Flettons_Survey
      */
     public function customer_order_page_shortcode()
     {
-
         $contactId = isset($_GET['contact_id']) ? $_GET['contact_id'] : null;
         $email = isset($_GET['email']) ? $_GET['email'] : null;
         $lavel = isset($_GET['level']) ? $_GET['level'] : null;
         $total = isset($_GET['total']) ? $_GET['total'] : null;
+        $order = isset($_GET['order']) ? $_GET['order'] : null;
 
         $api = new Flettons_API();
 
         // direct order
-        if ($email !== null || $lavel !== null || $total !== null) {
+        if ($email !== null && $lavel !== null && $total !== null && $order !== null) {
             // find_contact_by_email
             $conatct = $api->find_contact_by_email_address($email);
 
             if (empty($conatct)) {
-                wp_redirect(site_url('/flettons-quote-form'));
+                wp_redirect(site_url('/flettons-listing-page?contact_id=' . $contactId));
                 exit;
             }
 
@@ -265,38 +297,22 @@ class Flettons_Survey
                 wp_redirect($checkout);
                 exit;
             } else {
-                wp_redirect(site_url('/flettons-quote-form'));
+                wp_redirect(site_url('/flettons-listing-page?contact_id=' . $contactId));
                 exit;
             }
             exit;
         }
 
-        // // customer signup
-        if ($email !== null || $lavel !== null || $total !== null || $contactId !== null) {
-            $data = array(
-                'email_address' => $email,
-                'level' => $lavel,
-                'total' => $total,
-            );
-
-            $order_id = $api->create_order($contactId, $data);
-           
-        }
-
         //get parameters from URL
-        $contactId = isset($_GET['contactId']) ? $_GET['contactId'] : '';
         $email = isset($_GET['inf_field_Email']) ? $_GET['inf_field_Email'] : '';
+        $contactId = isset($_GET['contactId']) ? $_GET['contactId'] : '';
 
-        $data = array();
-
-
-        $order_id = $api->create_order($contactId, $data);
-        $checkout = $api->create_stripe_checkout($data, $contactId, $order_id);
-        if ($checkout) {
-            wp_redirect($checkout);
+        $link = $api->get_order_link($contactId);
+        if ($link) {
+            wp_redirect($link);
             exit;
         } else {
-            wp_redirect(site_url('/flettons-quote-form'));
+            wp_redirect(site_url('/flettons-listing-page?contact_id=' . $contactId));
             exit;
         }
     }

@@ -4,6 +4,15 @@
  */
 jQuery(document).ready(function ($) {
 
+    $('.click-level3').on('click', function () {
+        $('.step-1').hide();
+        $('.step-2').show();
+    });
+    $('.back').on('click', function () {
+        $('.step-1').show();
+        $('.step-2').hide();
+    });
+
     // Handle back button from Level 3 addons
     $('.back').click(function () {
         $('.step-2').hide();
@@ -33,48 +42,52 @@ jQuery(document).ready(function ($) {
 
     // Handle addon selection changes
     $('.addon').change(function () {
-        // Recalculate Level 3 price with selected addons
-        let basePrice = parseFloat($('#pricing-data').data('base-3') || 611.73);
-        const marketValue = parseFloat($('.market_value').val()) || 0;
-        const bedrooms = parseInt($('.number_of_bedrooms').val()) || 0;
-        const marketValuePercentage3 = parseFloat($('#pricing-data').data('mv-percent-3') || 0.0005);
-        const bedroomCost = parseFloat($('#pricing-data').data('bedroom-cost') || 50);
+        // Get base prices
+        let basePrice = parseFloat($('#level3-base-price').val() || 0);
+        let level4Price = parseFloat($('#level4-base-price').val() || 0);
 
-        // Calculate base price with market value and bedrooms
-        let price = basePrice;
-        if (marketValue >= 100000) {
-            price += marketValue * marketValuePercentage3;
-        }
-        if (bedrooms > 4) {
-            price += (bedrooms - 4) * bedroomCost;
+        // Start with base price
+        let totalPrice = basePrice;
+
+        // Get base link and remove any existing addon parameters
+        let baseLink = $('.level-3-confirm').attr('href');
+        baseLink = baseLink.replace(/&breakdown=1/, '');
+        baseLink = baseLink.replace(/&aerial=1/, '');
+        baseLink = baseLink.replace(/&insurance=1/, '');
+
+        // Check each addon and update price and link accordingly
+        if ($('.breakdown_of_estimated_repair_costs').val() == '1') {
+            totalPrice += parseFloat($('.breakdown_of_estimated_repair_costs').data('cost') || 0);
+            baseLink += '&breakdown=1';
         }
 
-        // Check if Plus package is selected
-        if ($('.plus_package').val() == '1') {
-            // If Plus package selected, use Level 4 price
-            $('.addons').hide();
-            price = parseFloat($('.total4').val());
-        } else {
-            // Otherwise calculate with individual addons
-            $('.addons').show();
-
-            if ($('.breakdown_of_estimated_repair_costs').val() == '1') {
-                price += parseFloat($('.breakdown_of_estimated_repair_costs').data('cost') || 300);
-            }
-            if ($('.aerial_roof_and_chimney').val() == '1') {
-                price += parseFloat($('.aerial_roof_and_chimney').data('cost') || 200);
-            }
-            if ($('.insurance_reinstatement_valuation').val() == '1') {
-                price += parseFloat($('.insurance_reinstatement_valuation').data('cost') || 200);
-            }
-            if ($('.thermal_images').val() == '1') {
-                price += parseFloat($('.thermal_images').data('cost') || 250);
-            }
+        if ($('.aerial_roof_and_chimney').val() == '1') {
+            totalPrice += parseFloat($('.aerial_roof_and_chimney').data('cost') || 0);
+            baseLink += '&aerial=1';
         }
+
+        if ($('.insurance_reinstatement_valuation').val() == '1') {
+            totalPrice += parseFloat($('.insurance_reinstatement_valuation').data('cost') || 0);
+            baseLink += '&insurance=1';
+        }
+
+        // Update total price in the URL
+        baseLink = baseLink.replace(/total=\d+(?:\.\d+)?/, 'total=' + totalPrice.toFixed(2));
 
         // Update Level 3 price display
-        $('.total3').val(price.toFixed(2));
-        $('.level3-price').text('£' + price.toFixed(2));
+        $('.total3').val(totalPrice.toFixed(2));
+        $('.level3-price').text('£' + totalPrice.toFixed(2));
+        $('.save-price').text('£' + (totalPrice - level4Price).toFixed(2));
+        $('.level-3-confirm').attr('href', baseLink);
+
+        // Show appropriate option based on price comparison
+        if (totalPrice > level4Price) {
+            $('.level4-all-inlcude-addons').show();
+            $('.level-3-confirm').hide();
+        } else {
+            $('.level4-all-inlcude-addons').hide();
+            $('.level-3-confirm').show();
+        }
     });
 
 });
