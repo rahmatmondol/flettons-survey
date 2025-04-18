@@ -37,7 +37,7 @@ if (!defined('ABSPATH')) {
             <div class="form-row">
                 <div>
                     <select name="house_or_flat" required>
-                        <option value="">House or Flat</option>
+                        <option value="">Select Property Type</option>
                         <option>House</option>
                         <option>Flat</option>
                         <option>Maisonette</option>
@@ -63,7 +63,7 @@ if (!defined('ABSPATH')) {
                 </div>
             </div>
             <div>
-                <input type="number" id="market_value" name="market_value" placeholder="Market Value (£)" pattern="\d{1,6}" title="Please enter between 1 and 6 digits (e.g., 100000)" required>
+                <input type="number" id="market_value" name="market_value" min="100000" step="1" max="999999" placeholder="Market Value (£)" pattern="\d{5}" title="Please enter a 5 digit number (e.g., 12345)" required>
             </div>
         </div>
 
@@ -75,13 +75,7 @@ if (!defined('ABSPATH')) {
                     <span class="slider"></span>
                 </label>
             </div>
-            <!-- <div class="switch-option">
-                <label class="switch-label" for="extended">Extended?</label>
-                <label class="switch">
-                    <input type="checkbox" id="extended" name="extended" value="Yes">
-                    <span class="slider"></span>
-                </label>
-            </div> -->
+
             <div class="switch-option">
                 <label class="switch-label" for="over1650">Over 1650 sqft?</label>
                 <label class="switch">
@@ -90,13 +84,11 @@ if (!defined('ABSPATH')) {
                 </label>
             </div>
             <div id="sqftPriceBox" style="display: none; margin-top: 10px;">
-                <input type="number" id="sqft_area" name="sqft_area" placeholder="Floor Area (sqft)" min="1651">
+                <input type="number" id="sqft_area" name="sqft_area" placeholder="Floor Area (sqft)" min="1651" step="1">
             </div>
         </div>
 
         <!-- Hidden fields -->
-        <input type="hidden" name="level" value="2">
-        <input type="hidden" name="total" id="total" value="0">
         <input type="hidden" name="action" value="process_quote_form">
         <input type="hidden" name="quote_form_nonce" value="<?php echo wp_create_nonce('flettons_quote_form_nonce'); ?>">
 
@@ -109,6 +101,8 @@ if (!defined('ABSPATH')) {
         Powered by Flettons Group
     </div>
 </div>
+
+
 <script type="text/javascript">
     function initializeAutocomplete() {
         // Check if Google Maps API is loaded
@@ -162,70 +156,16 @@ if (!defined('ABSPATH')) {
             $("#sqftPriceBox").toggle($("#over1650").is(":checked"));
         };
 
-        // Get settings from PHP - these need to be properly passed from your PHP settings
-        const listing_fee = <?php echo (int)$this->get_setting('listing-fee') ?: 250; ?>;
-        const extra_sqft = <?php echo (float)$this->get_setting('extra-sqft') ?: 0.25; ?>;
-        const extra_rooms = <?php echo (int)$this->get_setting('extra-rooms') ?: 50; ?>;
-        const base_price = <?php echo (int)$this->get_setting('base-price') ?: 499; ?>;
-
-        // Calculate the quote
-        function calculateQuote() {
-            let basePrice = base_price; // Base price from settings
-            let additionalCost = 0;
-
-            // Add costs for options
-            if ($("#listed").is(":checked")) additionalCost += listing_fee;
-
-            // Square footage calculation
-            if ($("#over1650").is(":checked")) {
-                const sqft = parseFloat($("#sqft_area").val()) || 1651;
-                if (sqft > 1650) {
-                    additionalCost += Math.round((sqft - 1650) * extra_sqft);
-                }
-            }
-
-            // Bedroom calculation
-            const bedrooms = parseInt($("select[name='number_of_bedrooms']").val()) || 0;
-            if (bedrooms > 3) {
-                additionalCost += (bedrooms - 3) * extra_rooms;
-            }
-
-            const total = basePrice + additionalCost;
-
-            // Store total in hidden field
-            $("#total").val(total);
-
-            return {
-                base: basePrice,
-                additional: additionalCost,
-                total: total
-            };
-        }
-
         // Form submission handler
         $("#quoteForm").on("submit", function(e) {
             e.preventDefault();
 
-            // Get market value input
-            const marketValue = $("input[name='market_value']").val();
-
-            // Check if market value is empty or not valid
-            if (!marketValue) {
-                $("#quote-message")
-                    .show()
-                    .html('<div style="color:#721c24; padding:10px; border-radius:4px;">Please enter a market value.</div>');
-                return;
-            }
-
-            $(this).find("button[type='submit']").prop("disabled", true).text("Processing...");
+            // $(this).find("button[type='submit']").prop("disabled", true).text("Processing...");
 
             // Show loading message
             $("#quote-message")
                 .show()
                 .html('<div style="padding:10px; text-align:center;">Processing your request...</div>');
-
-            // Calculate quote
-            const quote = calculateQuote();
 
             // Get form data
             const formData = $(this).serialize();
@@ -245,7 +185,6 @@ if (!defined('ABSPATH')) {
                 data: {
                     action: 'store_temp_quote_data',
                     formData: formData,
-                    quote: quote
                 },
                 success: function(response) {
                     console.log("AJAX response:", response);
@@ -255,22 +194,13 @@ if (!defined('ABSPATH')) {
                             .html('<div style="color:#155724; padding:10px; border-radius:4px;">Your quote has been submitted successfully!</div>');
 
                         // Redirect to listing page with quote data in URL (if needed)
-                        const redirectUrl = '<?php echo esc_js(site_url('/flettons-listing-page/')); ?>' + '?' + buildQueryString({
-                            first_name: $("input[name='first_name']").val(),
-                            last_name: $("input[name='last_name']").val(),
-                            email: $("input[name='email_address']").val(),
-                            phone: $("input[name='telephone_number']").val(),
-                            address: $("input[name='full_address']").val(),
-                            bedrooms: $("select[name='number_of_bedrooms']").val(),
-                            property_type: $("select[name='house_or_flat']").val(),
-                            market_value: $("input[name='market_value']").val(),
-                            total: $("#total").val(),
-                            quote_id: response.data ? response.data.quote_id : ''
-                        });
+                        const redirectUrl = new URL('<?php echo esc_js(site_url('/flettons-listing-page/')); ?>');
+                        if (response.data.contact_id) {
+                            redirectUrl.searchParams.set('contact_id', response.data.contact_id);
+                        }
 
-                        // console.log("Redirect URL:", redirectUrl);
                         // Uncomment to enable redirect
-                        window.location.href = redirectUrl;
+                        window.location.href = redirectUrl.toString();
                     } else {
                         // Show error message
                         $("#quote-message")
@@ -294,24 +224,6 @@ if (!defined('ABSPATH')) {
             });
         });
 
-        // Helper function to build query string
-        function buildQueryString(params) {
-            return Object.keys(params).map(key =>
-                encodeURIComponent(key) + '=' + encodeURIComponent(params[key])
-            ).join('&');
-        }
 
-        // Add responsive handling for telephone inputs
-        if ($(window).width() < 768) {
-            $(".telephone-field").css("flex-direction", "column");
-        }
-
-        $(window).resize(function() {
-            if ($(window).width() < 768) {
-                $(".telephone-field").css("flex-direction", "column");
-            } else {
-                $(".telephone-field").css("flex-direction", "row");
-            }
-        });
     });
 </script>

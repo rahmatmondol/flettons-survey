@@ -65,17 +65,13 @@ class Flettons_Admin
             'market-value-percentage-2' => 'Level 2 Market Value Percentage',
             'market-value-percentage-3' => 'Level 3 Market Value Percentage',
             'market-value-percentage-4' => 'Level 4 Market Value Percentage',
-            'number-of-bedrooms' => 'Extra Bedroom Cost',
-            'reception-rooms' => 'Extra Reception Room Cost',
-            'number-of-storeys' => 'Extra Storey Cost',
-            'listed-building' => 'Listed Building Extra Cost',
-            'conservation-area' => 'Conservation Area Extra Cost',
             'breakdown-of-estimated-repair-costs' => 'Repair Costs Breakdown Cost',
             'aerial-roof-and-chimney' => 'Aerial Roof and Chimney Cost',
             'insurance-reinstatement-valuation' => 'Insurance Reinstatement Valuation Cost',
             'thermal-images' => 'Thermal Images Cost',
             'listinsg-fee' => 'Listing Fee Cost',
             'extra-sqft' => 'Extra Sqft Cost',
+            'reception-rooms' => 'Extra Reception Room Cost',
             'extra-rooms' => 'Extra Rooms Cost'
         );
 
@@ -86,7 +82,7 @@ class Flettons_Admin
                 array($this, 'render_pricing_field'),
                 'flettons-survey',
                 'flettons_pricing_section',
-                array('id' => $id, 'label' => $label)
+                array('id' => $id, 'label' => $label, 'step' => '0.000001')
             );
         }
 
@@ -134,7 +130,7 @@ class Flettons_Admin
         $settings = get_option('flettons_survey_settings', array());
         $value = isset($settings[$id]) ? $settings[$id] : '';
 
-        echo '<input type="number" step="0.01" id="' . esc_attr($id) . '" name="flettons_survey_settings[' . esc_attr($id) . ']" value="' . esc_attr($value) . '" class="regular-text" />';
+        echo '<input type="number" step="0.000001" id="' . esc_attr($id) . '" name="flettons_survey_settings[' . esc_attr($id) . ']" value="' . esc_attr($value) . '" class="regular-text" />';
     }
 
     /**

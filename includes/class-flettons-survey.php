@@ -5,6 +5,7 @@
  */
 class Flettons_Survey
 {
+
     /**
      * Initialize the plugin
      */
@@ -107,6 +108,7 @@ class Flettons_Survey
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('flettons_quote_form_nonce'),
             'listing_page_url' => get_permalink(get_page_by_path('flettons-listing-page'))
+
         ));
 
         wp_localize_script('flettons-listing-page-js', 'flettons_ajax', array(
@@ -131,10 +133,6 @@ class Flettons_Survey
         // wp_enqueue_script('flettons-quote-form-js');
         wp_enqueue_script('google-maps');
 
-        $listinsg_fee = $this->get_setting('listinsg-fee') ?? 0;
-        $extra_sqft = $this->get_setting('extra-sqft') ?? 0;
-        $extra_rooms = $this->get_setting('extra-rooms') ?? 0;
-
         ob_start();
         include FLETTONS_SURVEY_PLUGIN_DIR . 'templates/quote-form.php';
         return ob_get_clean();
@@ -151,6 +149,23 @@ class Flettons_Survey
         // Enqueue listing page script
         wp_enqueue_script('flettons-listing-page-js');
 
+        // Get quote ID from URL
+        $contact_id = isset($_GET['contact_id']) ? $_GET['contact_id'] : '';
+
+        // Check if contact ID is provided
+        if (empty($contact_id)) {
+            wp_redirect(site_url('/flettons-quote-form'));
+            exit;
+        }
+
+        // Get quote data from transient
+        $quote_data = get_transient('flettons_temp_quote_' . $contact_id);
+
+        if (empty($quote_data)) {
+            wp_redirect(site_url('/flettons-quote-form'));
+            exit;
+        }
+
         ob_start();
         include FLETTONS_SURVEY_PLUGIN_DIR . 'templates/listing-page.php';
         return ob_get_clean();
@@ -166,12 +181,18 @@ class Flettons_Survey
         $contact_id = isset($_GET['contact_id']) ? $_GET['contact_id'] : '';
         $order_id = isset($_GET['order_id']) ? $_GET['order_id'] : '';
 
-        // if (empty($amount) || empty($contact_id) || empty($order_id)) {
-        //     wp_redirect(site_url('/flettons-quote-form'));
-        //     exit;
-        // }
+        if (empty($amount) || empty($contact_id) || empty($order_id)) {
+            wp_redirect(site_url('/flettons-quote-form'));
+            exit;
+        }
 
         $confirm = $api->handle_stripe_payment_confirmation($amount, $contact_id, $order_id);
+
+        if ($confirm) {
+            echo '<script>window.location.href="' . site_url('/thank-you') . '";</script>';
+        } else {
+            echo '<script>window.location.href="' . site_url('/flettons-quote-form') . '";</script>';
+        }
     }
 
     /**
@@ -214,14 +235,63 @@ class Flettons_Survey
     public function customer_order_page_shortcode()
     {
 
+        $contactId = isset($_GET['contact_id']) ? $_GET['contact_id'] : null;
+        $email = isset($_GET['email']) ? $_GET['email'] : null;
+        $lavel = isset($_GET['level']) ? $_GET['level'] : null;
+        $total = isset($_GET['total']) ? $_GET['total'] : null;
+
+        $api = new Flettons_API();
+
+        // direct order
+        if ($email !== null || $lavel !== null || $total !== null) {
+            // find_contact_by_email
+            $conatct = $api->find_contact_by_email_address($email);
+
+            if (empty($conatct)) {
+                wp_redirect(site_url('/flettons-quote-form'));
+                exit;
+            }
+
+            $data = array(
+                'email_address' => $email,
+                'level' => $lavel,
+                'total' => $total,
+            );
+            $order_id = $api->create_order($conatct['id'], $data);
+
+            $checkout = $api->create_stripe_checkout($data, $conatct['id'], $order_id);
+
+            if ($checkout) {
+                wp_redirect($checkout);
+                exit;
+            } else {
+                wp_redirect(site_url('/flettons-quote-form'));
+                exit;
+            }
+            exit;
+        }
+
+        // // customer signup
+        if ($email !== null || $lavel !== null || $total !== null || $contactId !== null) {
+            $data = array(
+                'email_address' => $email,
+                'level' => $lavel,
+                'total' => $total,
+            );
+
+            $order_id = $api->create_order($contactId, $data);
+           
+        }
+
         //get parameters from URL
         $contactId = isset($_GET['contactId']) ? $_GET['contactId'] : '';
         $email = isset($_GET['inf_field_Email']) ? $_GET['inf_field_Email'] : '';
-        $qowte_data = get_transient('flettons_quote_' . $email);
 
-        $api = new Flettons_API();
-        $order_id = $api->create_order($contactId, $qowte_data);
-        $checkout = $api->create_stripe_checkout($qowte_data, $contactId, $order_id);
+        $data = array();
+
+
+        $order_id = $api->create_order($contactId, $data);
+        $checkout = $api->create_stripe_checkout($data, $contactId, $order_id);
         if ($checkout) {
             wp_redirect($checkout);
             exit;
@@ -247,21 +317,23 @@ class Flettons_Survey
         // Validate the data
 
         // Generate a unique quote ID
-        $quote_id = $api->create_contact($data);
+        $contact_id = $api->create_contact($data);
 
-        if (!$quote_id) {
+
+        if (!$contact_id) {
             wp_send_json_error(array('message' => 'Failed to create contact'));
             return;
         }
-        // apply tags
-        $api->apply_tags($quote_id, 643);
 
-        // Store data in transient (valid for 24 hours)
-        set_transient('flettons_quote_' . $quote_id, $data, 24 * HOUR_IN_SECONDS);
+        // save the data to a transient
+        set_transient('flettons_temp_quote_' . $contact_id, $data);
+
+        $api->apply_tags($contact_id, 643);
+        // apply tags
 
         wp_send_json_success(array(
             'message' => 'Quote data stored successfully',
-            'quote_id' => $quote_id,
+            'contact_id' => $contact_id,
         ));
     }
 
@@ -498,13 +570,59 @@ class Flettons_Survey
             $sanitized['sqft_area'] = absint($data['sqft_area']);
         }
 
-        if (isset($data['level'])) {
-            $sanitized['level'] = absint($data['level']);
+        $level1_price = $this->get_setting('level-1') ?? 0;
+        $level2_price = $this->get_setting('level-2') ?? 0;
+        $level3_price = $this->get_setting('level-3') ?? 0;
+        $level4_price = $this->get_setting('level-4') ?? 0;
+        $market_value_percentage = $this->get_setting('market-value-percentage') ?? 0;
+        $market_value_percentage_2 = $this->get_setting('market-value-percentage-2') ?? 0;
+        $market_value_percentage_3 = $this->get_setting('market-value-percentage-3') ?? 0;
+        $market_value_percentage_4 = $this->get_setting('market-value-percentage-4') ?? 0;
+        $breakdown_of_estimated_repair_costs = $this->get_setting('breakdown-of-estimated-repair-costs') ?? 0;
+        $aerial_roof_and_chimney = $this->get_setting('aerial-roof-and-chimney') ?? 0;
+        $insurance_reinstatement_valuation = $this->get_setting('insurance-reinstatement-valuation') ?? 0;
+        $thermal_images = $this->get_setting('thermal-images') ?? 0;
+        $listing_fee = $this->get_setting('listinsg-fee') ?? 0;
+        $extra_sqft = $this->get_setting('extra-sqft') ?? 0;
+        $extra_rooms = $this->get_setting('extra-rooms') ?? 0;
+
+        //extra bedrooms
+        if (isset($data['number_of_bedrooms']) && $data['number_of_bedrooms'] > 4) {
+            $level1_price += ($data['number_of_bedrooms'] - 4) * $extra_rooms;
+            $level2_price += ($data['number_of_bedrooms'] - 4) * $extra_rooms;
+            $level3_price += ($data['number_of_bedrooms'] - 4) * $extra_rooms;
+            $level4_price += ($data['number_of_bedrooms'] - 4) * $extra_rooms;
         }
 
-        if (isset($data['total'])) {
-            $sanitized['total'] = floatval($data['total']);
+        //listing_fee
+        if (isset($data['listed_building']) && $data['listed_building'] == 'Yes') {
+            $level1_price += $listing_fee;
+            $level2_price += $listing_fee;
+            $level3_price += $listing_fee;
+            $level4_price += $listing_fee;
         }
+
+        //exra sqft
+        if (isset($data['sqft_area']) && $data['sqft_area'] > 1650) {
+            $level1_price += ($data['sqft_area'] - 1650) * $extra_sqft;
+            $level2_price += ($data['sqft_area'] - 1650) * $extra_sqft;
+            $level3_price += ($data['sqft_area'] - 1650) * $extra_sqft;
+            $level4_price += ($data['sqft_area'] - 1650) * $extra_sqft;
+        }
+
+        // market value
+        if (isset($data['market_value'])) {
+            $level1_price += $data['market_value'] * $market_value_percentage;
+            $level2_price += $data['market_value'] * $market_value_percentage_2;
+            $level3_price += $data['market_value'] * $market_value_percentage_3;
+            $level4_price += $data['market_value'] * $market_value_percentage_4;
+        }
+
+
+        $sanitized['total1'] = $level1_price;
+        $sanitized['total2'] = $level2_price;
+        $sanitized['total3'] = $level3_price;
+        $sanitized['total4'] = $level4_price;
 
         return $sanitized;
     }

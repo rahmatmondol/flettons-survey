@@ -83,6 +83,20 @@ class Flettons_API
         return false;
     }
 
+    // find contact by email
+    public function find_contact_by_email_address($email)
+    {
+        $url = $this->api_base . "/contacts?email=" . $email;
+
+        $response = $this->make_api_request($url, 'GET');
+
+        if (isset($response['contacts']) && !empty($response['contacts'])) {
+            return $response['contacts'][0];
+        }
+
+        return false;
+    }
+
 
     /**
      * Update existing contact
@@ -98,6 +112,72 @@ class Flettons_API
         return isset($response['id']) ? $response['id'] : false;
     }
 
+    // data for contact
+    private function data_for_contact($data)
+    {
+        $contactData = array(
+            'given_name' => $data['first_name'],
+            'family_name' => $data['last_name'],
+
+            'addresses' => array(
+                array(
+                    'line1' => $data['full_address'] ?? '',
+                    'line2' => '',
+                    'locality' => $data['city'] ?? '',
+                    'postal_code' => $data['postcode'] ?? '',
+                    'country_code' => $data['country_code'] ?? '',
+                    'field' => 'BILLING'
+                )
+            ),
+
+            'phone_numbers' => array(
+                array(
+                    'number' => $data['countryCode'] . $data['telephone_number'],
+                    'field' => 'PHONE1'
+                )
+            ),
+
+            'email_addresses' => array(
+                array(
+                    'email' => $data['email_address'],
+                    'field' => 'EMAIL1'
+                )
+            ),
+
+
+            'custom_fields' => array(
+                //survey data
+                array('id' => '191', 'content' => isset($data['full_address']) && isset($data['postcode']) ? $data['full_address'] : ''),
+                array('id' => '193', 'content' => isset($data['market_value']) ? $data['market_value'] : ''),
+                array('id' => '195', 'content' => isset($data['house_or_flat']) ? $data['house_or_flat'] : ''),
+                array('id' => '197', 'content' => isset($data['number_of_bedrooms']) ? $data['number_of_bedrooms'] : ''),
+                array('id' => '203', 'content' => isset($data['listed_building']) ? $data['listed_building'] : ''),
+                array('id' => '208', 'content' => isset($data['breakdown_of_estimated_repair_costs']) ? $data['breakdown_of_estimated_repair_costs'] : ''),
+                array('id' => '210', 'content' => isset($data['aerial_roof_and_chimney']) ? $data['aerial_roof_and_chimney'] : ''),
+                array('id' => '212', 'content' => isset($data['insurance_reinstatement_valuation']) ? $data['insurance_reinstatement_valuation'] : ''),
+                array('id' => '214', 'content' => isset($data['thermal_images']) ? $data['thermal_images'] : ''),
+                array('id' => '216', 'content' => isset($data['plus_package']) ? $data['plus_package'] : ''),
+
+                //order links
+                array('id' => '218', 'content' => site_url() . '/flettons-order/?email=' . $data['email_address'] . '&total=' . $data['total1'] . '&level=1'),
+                array('id' => '222', 'content' => site_url() . '/flettons-order/?email=' . $data['email_address'] . '&total=' . $data['total2'] . '&level=2'),
+                array('id' => '226', 'content' => site_url() . '/flettons-order/?email=' . $data['email_address'] . '&total=' . $data['total3'] . '&level=3'),
+                array('id' => '240', 'content' => site_url() . '/flettons-order/?email=' . $data['email_address'] . '&total=' . $data['total4'] . '&level=4'),
+
+                //orderform 
+                array('id' => '207', 'content' => $data),
+                array('id' => '220', 'content' => isset($data['total1']) ? $data['total1'] : ''),
+                array('id' => '224', 'content' => isset($data['total2']) ? $data['total2'] : ''),
+                array('id' => '228', 'content' => isset($data['total3']) ? $data['total3'] : ''),
+                array('id' => '238', 'content' => isset($data['total4']) ? $data['total4'] : ''),
+                array('id' => '230', 'content' => isset($data['terms_and_conditions']) ? $data['terms_and_conditions'] : ''),
+                array('id' => '232', 'content' => isset($data['print_date_terms']) ? $data['print_date_terms'] : '')
+            )
+        );
+
+        return $contactData;
+    }
+
     /**
      * Create new contact
      */
@@ -105,7 +185,9 @@ class Flettons_API
     {
         $url = $this->api_base . "/contacts";
 
-        $contact_data = $this->prepare_contact_data($data);
+        $contact_data = $this->data_for_contact($data);
+
+        // return  $contact_data;
 
         $response = $this->make_api_request($url, 'POST', $contact_data);
 
@@ -269,7 +351,7 @@ class Flettons_API
 
         $contact_data['custom_fields'][] = array(
             'id' => '234',
-            'content' => 'https://flettons.com/flettons/orderform.php?email=' . $email_for_url . '&total=' . $total . '&level=' . $level
+            'content' => get_site_url() . '/flettons-listing-page/?email=' . $email_for_url . '&total=' . $total . '&level=' . $level
         );
 
         return $contact_data;
@@ -514,8 +596,8 @@ class Flettons_API
         error_log('add payment: ' . json_encode($response));
 
         // Redirect to success page
-        wp_redirect(site_url('/thank-you'));
-        exit;
+        // wp_redirect(site_url('/thank-you'));
+        return true;
     }
 
 
@@ -525,43 +607,31 @@ class Flettons_API
      */
     private function make_api_request($url, $method = 'GET', $data = null)
     {
-        $headers = [
-            'Authorization: Bearer ' . $this->keap_api_key,
-            'Content-Type: application/json',
-            'Accept: application/json'
-        ];
+        $args = array(
+            'method' => $method,
+            'headers' => array(
+                'Authorization' => 'Bearer ' . $this->keap_api_key,
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json'
+            ),
+            'body' => $data ? json_encode($data) : null
+        );
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        $response = wp_remote_request($url, $args);
 
-        // Disable SSL verification for development environments
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-
-        if ($data && ($method === 'POST' || $method === 'PATCH' || $method === 'PUT')) {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-        }
-
-        $response = curl_exec($ch);
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-        if (curl_errno($ch)) {
-            error_log('API Error: ' . curl_error($ch));
-            curl_close($ch);
+        if (is_wp_error($response)) {
+            error_log('API Error: ' . $response->get_error_message());
             return false;
         }
 
-        curl_close($ch);
-        // Handle response based on status code
+        $http_code = wp_remote_retrieve_response_code($response);
+
         if ($http_code >= 200 && $http_code < 300) {
-            return json_decode($response, true);
+            return json_decode(wp_remote_retrieve_body($response), true);
         } elseif ($method === 'DELETE' && $http_code === 204) {
             return true;
         } else {
-            error_log('API Error: ' . $response);
+            error_log('API Error: ' . wp_remote_retrieve_body($response));
             return false;
         }
     }
