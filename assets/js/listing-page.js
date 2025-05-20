@@ -4,6 +4,55 @@
  */
 jQuery(document).ready(function ($) {
 
+
+    // Handle button click
+    $('.buy-now-btn').click(function (e) {
+        e.preventDefault();
+
+        //get data from href
+        const href = $(this).attr('href');
+
+        // set data to href
+        $('.confirm-yes').attr('href', href);
+
+        // hide listing page
+        $('#quote-container').fadeOut();
+
+        // show confirmation page
+        $('#confirm-popup-conteiner').fadeIn();
+    });
+
+    // hide confirmation page
+    $('.confirm-no').click(function (e) {
+        e.preventDefault();
+
+        // hide confirmation page
+        $('#confirm-popup-conteiner').fadeOut();
+
+        // show listing page
+        $('#quote-container').fadeIn();
+    });
+
+    // handle confirmation
+    $('.confirm-yes').click(function (e) {
+        e.preventDefault();
+
+        //check if href is empty
+        if ($(this).attr('href') === '') {
+            return;
+        }
+
+        // check if terms and conditions are checked
+        if (!$('#termsCheckbox').is(':checked')) {
+            alert('Please accept the terms and conditions');
+            return;
+        }
+
+        // redirect to href
+        window.location.href = $(this).attr('href');
+
+    });
+
     $('.click-level3').on('click', function () {
         $('.step-1').hide();
         $('.step-2').show();

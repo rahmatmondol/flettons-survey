@@ -334,6 +334,7 @@ class Flettons_Survey
 
         // Generate a unique quote ID
         $contact_id = $api->create_contact($data);
+        // $contact_id = 136859;
 
 
         if (!$contact_id) {
@@ -590,14 +591,12 @@ class Flettons_Survey
         $level2_price = $this->get_setting('level-2') ?? 0;
         $level3_price = $this->get_setting('level-3') ?? 0;
         $level4_price = $this->get_setting('level-4') ?? 0;
+
         $market_value_percentage = $this->get_setting('market-value-percentage') ?? 0;
         $market_value_percentage_2 = $this->get_setting('market-value-percentage-2') ?? 0;
         $market_value_percentage_3 = $this->get_setting('market-value-percentage-3') ?? 0;
         $market_value_percentage_4 = $this->get_setting('market-value-percentage-4') ?? 0;
-        $breakdown_of_estimated_repair_costs = $this->get_setting('breakdown-of-estimated-repair-costs') ?? 0;
-        $aerial_roof_and_chimney = $this->get_setting('aerial-roof-and-chimney') ?? 0;
-        $insurance_reinstatement_valuation = $this->get_setting('insurance-reinstatement-valuation') ?? 0;
-        $thermal_images = $this->get_setting('thermal-images') ?? 0;
+
         $listing_fee = $this->get_setting('listinsg-fee') ?? 0;
         $extra_sqft = $this->get_setting('extra-sqft') ?? 0;
         $extra_rooms = $this->get_setting('extra-rooms') ?? 0;
@@ -620,7 +619,7 @@ class Flettons_Survey
 
         //exra sqft
         if (isset($data['sqft_area']) && $data['sqft_area'] > 1650) {
-            $level1_price += ($data['sqft_area'] - 1650) * $extra_sqft;
+            // $level1_price += ($data['sqft_area'] - 1650) * $extra_sqft;
             $level2_price += ($data['sqft_area'] - 1650) * $extra_sqft;
             $level3_price += ($data['sqft_area'] - 1650) * $extra_sqft;
             $level4_price += ($data['sqft_area'] - 1650) * $extra_sqft;
@@ -635,10 +634,10 @@ class Flettons_Survey
         }
 
 
-        $sanitized['total1'] = $level1_price;
-        $sanitized['total2'] = $level2_price;
-        $sanitized['total3'] = $level3_price;
-        $sanitized['total4'] = $level4_price;
+        $sanitized['total1'] = number_format((float)$level1_price, 2, '.', '');
+        $sanitized['total2'] = number_format((float)$level2_price, 2, '.', '');
+        $sanitized['total3'] = number_format((float)$level3_price, 2, '.', '');
+        $sanitized['total4'] = number_format((float)$level4_price, 2, '.', '');
 
         return $sanitized;
     }

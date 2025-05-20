@@ -37,7 +37,7 @@ if (!defined('ABSPATH')) {
             <div class="form-row">
                 <div>
                     <select name="house_or_flat" required>
-                        <option value="">Select Property Type</option>
+                        <option value="">Property Type</option>
                         <option>House</option>
                         <option>Flat</option>
                         <option>Maisonette</option>
@@ -48,7 +48,7 @@ if (!defined('ABSPATH')) {
                 </div>
                 <div>
                     <select name="number_of_bedrooms" required>
-                        <option value="">Number of Bedrooms</option>
+                        <option value="">Bedrooms</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
@@ -63,7 +63,7 @@ if (!defined('ABSPATH')) {
                 </div>
             </div>
             <div>
-                <input type="number" id="market_value" name="market_value" min="100000" step="1" max="999999" placeholder="Market Value (£)" pattern="\d{5}" title="Please enter a 5 digit number (e.g., 12345)" required>
+                <input type="number" id="market_value" name="market_value" min="100000" step="1" max="99999999" placeholder="Market Value (£)" pattern="\d{5}" title="Please enter a 5 digit number (e.g., 12345)" required>
             </div>
         </div>
 
