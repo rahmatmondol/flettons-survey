@@ -5,10 +5,7 @@ if (!defined('ABSPATH')) {
 }
 ?>
 <div class="form-container">
-    <h2>RICS Survey Quotes</h2>
-
-    <!-- Message container for success/error messages -->
-    <div id="quote-message" style="display:none; margin-bottom:15px; padding:10px;"></div>
+    <h2 class="form-title">RICS Survey Quote</h2>
 
     <form id="quoteForm">
         <div class="form-grid">
@@ -93,14 +90,35 @@ if (!defined('ABSPATH')) {
         <input type="hidden" name="quote_form_nonce" value="<?php echo wp_create_nonce('flettons_quote_form_nonce'); ?>">
 
         <div class="buttons">
-            <button type="submit" style="padding: 15px 40px;background: #90be13;color: #fff;border: none;border-radius: 10px;">GET INSTANT QUOTE</button>
+            <button type="submit" id="proceedBtn" style="padding: 15px 40px;background: #90be13;color: #fff;border: none;border-radius: 10px;">GET INSTANT QUOTE</button>
+            <div style="display: none; margin: 15px auto; animation: rotate 2s linear infinite;" id="loading">
+                <svg width="50" height="50" viewBox="0 0 50 50">
+                    <circle cx="25" cy="25" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" stroke="#90be13" />
+                </svg>
+            </div>
         </div>
     </form>
 
     <div class="footer">
-        Powered by Flettons Group
+        <div class="footer-text">
+            <input type="checkbox" id="agree_terms" name="agree_terms" required>
+            <label for="agree_terms">Your details are never shared with third parties. 
+                Powered by <b>Flettons Group LLC</b> </label>
+        </div>
     </div>
 </div>
+
+<style>
+    @keyframes rotate {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
 
 
 <script type="text/javascript">
@@ -160,12 +178,19 @@ if (!defined('ABSPATH')) {
         $("#quoteForm").on("submit", function(e) {
             e.preventDefault();
 
-            // $(this).find("button[type='submit']").prop("disabled", true).text("Processing...");
+            // check if agree_terms is checked
+            if (!$("#agree_terms").is(":checked")) {
+                alert("Please agree to the terms and conditions.");
+                return;
+            }
+
+            $(this).find("button[type='submit']").hide();
+            $("#loading").show();
 
             // Show loading message
-            $("#quote-message")
-                .show()
-                .html('<div style="padding:10px; text-align:center;">Processing your request...</div>');
+            // $("#quote-message")
+            //     .show()
+            //     .html('<div style="padding:10px; text-align:center;">Processing your request...</div>');
 
             // Get form data
             const formData = $(this).serialize();
@@ -190,8 +215,6 @@ if (!defined('ABSPATH')) {
                     console.log("AJAX response:", response);
                     if (response.success) {
                         // Show success message
-                        $("#quote-message")
-                            .html('<div style="color:#155724; padding:10px; border-radius:4px;">Your quote has been submitted successfully!</div>');
 
                         // Redirect to listing page with quote data in URL (if needed)
                         const redirectUrl = new URL('<?php echo esc_js(site_url('/flettons-listing-page/')); ?>');
@@ -203,9 +226,9 @@ if (!defined('ABSPATH')) {
                         window.location.href = redirectUrl.toString();
                     } else {
                         // Show error message
-                        $("#quote-message")
-                            .html('<div style="color:#721c24; padding:10px; border-radius:4px;">' +
-                                (response.data && response.data.message ? response.data.message : "An error occurred.") + '</div>');
+                        // $("#quote-message")
+                        //     .html('<div style="color:#721c24; padding:10px; border-radius:4px;">' +
+                        //         (response.data && response.data.message ? response.data.message : "An error occurred.") + '</div>');
 
                         // Re-enable button
                         $("#quoteForm").find("button[type='submit']").prop("disabled", false).text("GET INSTANT QUOTE");
@@ -214,9 +237,9 @@ if (!defined('ABSPATH')) {
                 error: function(xhr, status, error) {
                     console.error("AJAX error:", error);
                     // Show error message
-                    $("#quote-message")
-                        .html('<div style="color:#721c24; padding:10px; border-radius:4px;">' +
-                            "There was an error processing your request. Please try again." + '</div>');
+                    // $("#quote-message")
+                    //     .html('<div style="color:#721c24; padding:10px; border-radius:4px;">' +
+                    //         "There was an error processing your request. Please try again." + '</div>');
 
                     // Re-enable button
                     $("#quoteForm").find("button[type='submit']").prop("disabled", false).text("GET INSTANT QUOTE");

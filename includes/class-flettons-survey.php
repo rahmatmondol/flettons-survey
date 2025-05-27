@@ -34,6 +34,108 @@ class Flettons_Survey
         // Register admin-post handler for form submission
         add_action('admin_post_flettons_process_signup', array($this, 'process_signup_form'));
         add_action('admin_post_nopriv_flettons_process_signup', array($this, 'process_signup_form'));
+
+        // add webhooks get requests
+        add_action('rest_api_init', function () {
+            register_rest_route('flettons/v1', '/quote-initiated', array(
+                'methods' => 'POST',
+                'callback' => array($this, 'handle_quote_initiated_webhook'),
+                'permission_callback' => '__return_true',
+            ));
+        });
+    }
+
+
+    /**
+     * Get custom field value by field ID
+     *
+     * @param array $customFields
+     * @param int $fieldId
+     * @return mixed|null
+     */
+    public function getCustomFieldValue($customFields, $fieldId)
+    {
+        foreach ($customFields as $field) {
+            if ($field['id'] == $fieldId) {
+                return $field['content'];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Handle quote initiated webhook
+     */
+    public function handle_quote_initiated_webhook(WP_REST_Request $request)
+    {
+        $contactId = $_REQUEST['id'];
+        if (empty($contactId)) {
+            return new WP_Error('missing_contact_id', 'Contact ID is required', array('status' => 400));
+        }
+        // Get the contact ID from the request
+
+        $api = new Flettons_API();
+
+        // Get quote data from transient
+        $contact = $api->find_contact_by_id($contactId);
+
+        if (empty($contact)) {
+            return new WP_Error('quote_not_found', 'Quote data not found', array('status' => 404));
+        }
+
+        $data = array(
+            'market_value' => $this->getCustomFieldValue($contact['custom_fields'], 193),
+            'number_of_bedrooms' => $this->getCustomFieldValue($contact['custom_fields'], 197),
+            'house_or_flat' => $this->getCustomFieldValue($contact['custom_fields'], 195),
+            'listed_building' => $this->getCustomFieldValue($contact['custom_fields'], 203),
+            'breakdown_of_estimated_repair_costs' => $this->getCustomFieldValue($contact['custom_fields'], 208),
+            'aerial_roof_and_chimney' => $this->getCustomFieldValue($contact['custom_fields'], 210),
+            'insurance_reinstatement_valuation' => $this->getCustomFieldValue($contact['custom_fields'], 212),
+        );
+
+        $data = $this->sanitize_form_data($data);
+        $data['email_address'] = $contact['email_addresses'][0]['email'];
+
+        // Save listing page URL in a transient for 1 month with a unique key
+        $key = hash('sha256', $contactId);
+        set_transient('encrypted_contact_id' . $key, $contactId, MONTH_IN_SECONDS);
+
+        $listing_page_url = site_url('/flettons-listing-page?contact_id=' . $key . '&temp=1');
+
+        $contactData = array(
+            'email_addresses' => array(
+                array(
+                    'email' => $contact['email_addresses'][0]['email'],
+                    'field' => 'EMAIL1'
+                )
+            ),
+
+            'custom_fields' => array(
+                array('id' => '218', 'content' => site_url() . '/flettons-order/?email=' . $data['email_address'] . '&total=' . $data['total1'] . '&level=1&order=1'),
+                array('id' => '222', 'content' => site_url() . '/flettons-order/?email=' . $data['email_address'] . '&total=' . $data['total2'] . '&level=2&order=1'),
+                array('id' => '226', 'content' => site_url() . '/flettons-order/?email=' . $data['email_address'] . '&total=' . $data['total3'] . '&level=3&order=1'),
+                array('id' => '240', 'content' => site_url() . '/flettons-order/?email=' . $data['email_address'] . '&total=' . $data['total4'] . '&level=4&order=1'),
+
+                array('id' => '601', 'content' => $listing_page_url),
+                array('id' => '207', 'content' => $data),
+                array('id' => '220', 'content' => isset($data['total1']) ? $data['total1'] : ''),
+                array('id' => '224', 'content' => isset($data['total2']) ? $data['total2'] : ''),
+                array('id' => '228', 'content' => isset($data['total3']) ? $data['total3'] : ''),
+                array('id' => '238', 'content' => isset($data['total4']) ? $data['total4'] : ''),
+            )
+        );
+
+        // update contact
+        $response = $api->update_webhook_contact($contactId, $contactData);
+
+        if (is_wp_error($response)) {
+            return new WP_Error('update_failed', 'Failed to update contact', array('status' => 500));
+        }
+
+        return rest_ensure_response(array(
+            'message' => 'Quote initiated successfully',
+            'data' => $listing_page_url,
+        ));
     }
 
     /**
@@ -151,6 +253,7 @@ class Flettons_Survey
 
         // Get quote ID from URL
         $contact_id = isset($_GET['contact_id']) ? $_GET['contact_id'] : '';
+        $temp = isset($_GET['temp']) ? $_GET['temp'] : null;
 
         // Check if contact ID is provided
         if (empty($contact_id)) {
@@ -158,14 +261,47 @@ class Flettons_Survey
             exit;
         }
 
-        // Get quote data from transient
-        $quote_data = get_transient('flettons_temp_quote_' . $contact_id);
-        $settings = get_option('flettons_survey_settings', array());
+        // If temp is set, use the contact ID as a key to get the encrypted contact ID
+        if ($temp) {
+            // get contact ID from transient
+            $contact_id = get_transient('encrypted_contact_id' . $contact_id);
+            $contact_id = $contact_id;
+        }
 
-        if (empty($quote_data)) {
+        // get data from API
+        $api = new Flettons_API();
+        $contact = $api->find_contact_by_id($contact_id);
+
+        if (empty($contact)) {
             wp_redirect(site_url('/flettons-quote-form'));
             exit;
         }
+
+        $quote_data = array(
+            'first_name' => $contact['given_name'] ?? '',
+            'last_name' => $contact['family_name'] ?? '',
+            'email_address' => $contact['email_addresses'][0]['email'] ?? '',
+            'telephone_number' => $contact['phone_numbers'][0]['number'] ?? '',
+            'full_address' => $this->getCustomFieldValue($contact['custom_fields'], 191),
+            'house_or_flat' => $this->getCustomFieldValue($contact['custom_fields'], 195),
+            'number_of_bedrooms' => $this->getCustomFieldValue($contact['custom_fields'], 197),
+            'market_value' => $this->getCustomFieldValue($contact['custom_fields'], 193),
+            'sqft_area' => $this->getCustomFieldValue($contact['custom_fields'], 603),
+            'listed_building' => $this->getCustomFieldValue($contact['custom_fields'], 203) ? 1 : 0,
+            'breakdown_of_estimated_repair_costs' => $this->getCustomFieldValue($contact['custom_fields'], 208),
+            'aerial_roof_and_chimney' => $this->getCustomFieldValue($contact['custom_fields'], 210),
+            'insurance_reinstatement_valuation' => $this->getCustomFieldValue($contact['custom_fields'], 212),
+            'thermal_images' => $this->getCustomFieldValue($contact['custom_fields'], 214),
+            'plus_package' => $this->getCustomFieldValue($contact['custom_fields'], 216),
+            'total1' => $this->getCustomFieldValue($contact['custom_fields'], 220),
+            'total2' => $this->getCustomFieldValue($contact['custom_fields'], 224),
+            'total3' => $this->getCustomFieldValue($contact['custom_fields'], 228),
+            'total4' => $this->getCustomFieldValue($contact['custom_fields'], 238),
+        );
+
+
+        $settings = get_option('flettons_survey_settings', array());
+
 
         ob_start();
         include FLETTONS_SURVEY_PLUGIN_DIR . 'templates/listing-page.php';

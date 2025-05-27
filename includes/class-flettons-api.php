@@ -83,6 +83,23 @@ class Flettons_API
         return false;
     }
 
+    /**
+     * Find contact by contact ID
+     */
+
+    public function find_contact_by_id($contact_id)
+    {
+        $url = $this->api_base . "/contacts/{$contact_id}?optional_properties=custom_fields";
+
+        $response = $this->make_api_request($url, 'GET');
+
+        if (isset($response['id'])) {
+            return $response;
+        }
+
+        return false;
+    }
+
     // find contact by email
     public function find_contact_by_email_address($email)
     {
@@ -118,6 +135,21 @@ class Flettons_API
             // Apply tags based on survey level
             $this->apply_level_tags($contact_id, $data['level']);
         }
+
+        return isset($response['id']) ? $response['id'] : false;
+    }
+
+    /**
+     * Update webhook contact
+     */
+
+    public function update_webhook_contact($contact_id, $data)
+    {
+        $url = $this->api_base . "/contacts/{$contact_id}";
+
+        $response = $this->make_api_request($url, 'PATCH', $data);
+
+        $this->apply_tags($response['id'], array(643));
 
         return isset($response['id']) ? $response['id'] : false;
     }
@@ -184,6 +216,7 @@ class Flettons_API
                 array('id' => '212', 'content' => isset($data['insurance_reinstatement_valuation']) ? $data['insurance_reinstatement_valuation'] : ''),
                 array('id' => '214', 'content' => isset($data['thermal_images']) ? $data['thermal_images'] : ''),
                 array('id' => '216', 'content' => isset($data['plus_package']) ? $data['plus_package'] : ''),
+                array('id' => '603', 'content' => isset($data['sqft_area']) ? $data['sqft_area'] : ''),
 
                 //order links
                 array('id' => '218', 'content' => site_url() . '/flettons-order/?email=' . $data['email_address'] . '&total=' . $data['total1'] . '&level=1&order=1'),
@@ -197,6 +230,7 @@ class Flettons_API
                 array('id' => '224', 'content' => isset($data['total2']) ? $data['total2'] : ''),
                 array('id' => '228', 'content' => isset($data['total3']) ? $data['total3'] : ''),
                 array('id' => '238', 'content' => isset($data['total4']) ? $data['total4'] : ''),
+
                 array('id' => '230', 'content' => isset($data['terms_and_conditions']) ? $data['terms_and_conditions'] : ''),
                 array('id' => '232', 'content' => isset($data['print_date_terms']) ? $data['print_date_terms'] : '')
             )

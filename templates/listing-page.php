@@ -6,34 +6,34 @@ if (!defined('ABSPATH')) {
 
 ?>
 
-
 <div class="container" id="quote-container">
     <form class="quote-f" action="">
         <div class="overlay">
             <div class="inner">
                 <div class="step-1">
                     <div class="row">
-                        <div id="frm_field_189_container" class="col-sm-12 text-center" style="color: #f8a000; font-weight: bold;">
-                            <h3 class="frm_pos_top frm_section_spacing">Your Flettons Surveyors Quotes</h3>
-                            <p>Thank you for your enquiry, <?php echo $quote_data['first_name']; ?>.</p>
+                        <div id="frm_field_189_container" class="col-sm-12 text-center">
+                            <h3 class="username">Hi <?php echo $quote_data['first_name']; ?></h3>
+                            <p>Here are your RICS Survey Quotes <br>
+                                Your Survey will be undertaken by <b>Flettons Surveyors Ltd</b> (Regulated by RICS)</p>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-sm-3 level-choice click-level1 border">
+                    <div class="row level-choices-container">
+                        <div class="col-sm-3 level-choice click-level1 ">
                             <h3 class="frm_pos_top frm_section_spacing">Level 1</h3>
                             <img class="img-responsive" alt="Flettons Survyors Full Building Survey Report" title="Level 1" src="<?php echo FLETTONS_SURVEY_PLUGIN_URL; ?>assets/images/ROOF-SURVEY-4.png">
                             <label for="field_fullsurvey2" class="frm_primary_label">Total Price<span class="frm_required"></span> </label>
                             <div class="level1-price level-price">£<?php echo esc_html($quote_data['total1']); ?></div>
                             <a href="<?php echo site_url() . '/flettons-customer-signup/?email=' . $quote_data['email_address'] . '&contact_id=' . $contact_id . '&total=' . $quote_data['total1'] . '&level=1'; ?>" class="btn btn-primary click-level1 btn-style buy-now-btn">Buy Now</a>
                         </div>
-                        <div class="col-sm-3 level-choice click-level2 border">
+                        <div class="col-sm-3 level-choice click-level2 ">
                             <h3 class="frm_pos_top frm_section_spacing">Level 2</h3>
                             <img alt="Flettons Survyors Full Building Survey Report" title="Level 2" src="<?php echo FLETTONS_SURVEY_PLUGIN_URL; ?>assets/images/FLETTONS-LEVEL-2-4.png">
                             <label for="field_fullsurvey2" class="frm_primary_label">Total Price <span class="frm_required"></span> </label>
                             <div class="level2-price level-price">£<?php echo esc_html($quote_data['total2']); ?></div>
                             <a href="<?php echo site_url() . '/flettons-customer-signup/?email=' . $quote_data['email_address'] . '&contact_id=' . $contact_id . '&total=' . $quote_data['total2'] . '&level=2'; ?>" class="btn btn-primary click-level2 btn-style buy-now-btn">Buy Now</a>
                         </div>
-                        <div class="col-sm-3 level-choice click-level3 border">
+                        <div class="col-sm-3 level-choice">
                             <h3 class="frm_pos_top frm_section_spacing">Level 3</h3>
                             <img alt="Flettons Survyors Full Building Survey Report" title="Level 3" src="<?php echo FLETTONS_SURVEY_PLUGIN_URL; ?>assets/images/FLETTONS-LEVEL-3-4.png">
                             <label for="field_fullsurvey2" class="frm_primary_label">Total Price <span class="frm_required"></span> </label>
@@ -41,7 +41,7 @@ if (!defined('ABSPATH')) {
                             <input type="hidden" name="level3" id="level3-base-price" value="<?php echo $quote_data['total3']; ?>" class="level4">
                             <div class="btn btn-primary click-level3 btn-style">Choose Add-ons</div>
                         </div>
-                        <div class="col-sm-3 level-choice click-level4 border">
+                        <div class="col-sm-3 level-choice click-level4 ">
                             <h3 class="frm_pos_top frm_section_spacing">Level 3+</h3>
                             <img alt="Flettons Survyors Full Building Survey Report" title="Level 3+" src="<?php echo FLETTONS_SURVEY_PLUGIN_URL; ?>assets/images/FLETTONS-LEVEL-3-4-1.png">
                             <label for="field_fullsurvey2" class="frm_primary_label">Total Price <span class="frm_required"></span> </label>
@@ -107,31 +107,35 @@ if (!defined('ABSPATH')) {
             </div>
         </div>
     </form>
-
 </div>
 
 <div class="confirm-popup-conteiner" id="confirm-popup-conteiner" style="display:none;">
     <div class="confirm-popup">
         <div class="confirm-popup-inner">
-            <h3>Confirm and Proceed with Your Instruction:</h3>
-            <p>Please confirm that you have read and agree to the <br>
-                <a href="/terms-and-conditions-all-levels/" target="_blank">Terms and Conditions</a>.
+            <div class="confirm-popup-close">
+                <span class="confirm-no">X</span>
+            </div>
+            <h3 class="confirm-popup-title">Confirm and Proceed</h3>
+            <p>By continuing, you agree to that</p>
+            <p>Flettons Group LLC will manage your payment and booking.</p>
+            <p>Your survey will be carried out by <br>
+                Flettons Surveyors Ltd - Regulated by RICS.
             </p>
-            <h2>By proceeding, you acknowledge that:</h2>
-            <p>Flettons Group LLC (our customer care and coordination partner) will securely handle your payment and appointment details. <br>
-                Your survey will be carried out by Flettons Surveyors Ltd - a company regulated by RICS. <br>
-                Once you agree to the Terms and Conditions, you'll be taken to a short instruction form to finalise your booking.
+            <p>
+                You'll then be taken to an instruction from to complete, read <br>
+                the terms of engagement and finalise your instruction.
             </p>
             <div class="terms-checkbox">
                 <label>
                     <input type="checkbox" id="termsCheckbox" name="terms_agreed" value="1" required>
-                     I agree to the Terms and Conditions
+                    I agree to the <a href="/terms-and-conditions-all-levels/" target="_blank">Terms and Conditions</a>.
                 </label>
             </div>
             <div class="btn-style-group">
                 <a href="#" class="btn btn-primary confirm-yes">Proceed</a>
-                <a href="#" class="btn btn-primary confirm-no">Cancel</a>
+                <a href="#" class="btn btn-primary confirm-no">Go Back</a>
             </div>
+            <p class="powered-by">Powered by Flettons Group</p>
         </div>
     </div>
 </div>

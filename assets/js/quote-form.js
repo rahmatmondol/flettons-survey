@@ -45,12 +45,12 @@
         // Proceed button - Store data and redirect to listing page
         $("#quoteForm").on("submit", function (e) {
             e.preventDefault();
-            $(this).prop("disabled", true).text("Processing...");
+            // $(this).prop("disabled", true).text("Processing...");
 
             // Show loading message
-            $("#quote-message")
-                .show()
-                .html('<div style="padding:10px; text-align:center;">Processing your request...</div>');
+            // $("#quote-message")
+            //     .show()
+            //     .html('<div style="padding:10px; text-align:center;">Processing your request...</div>');
 
             // Get form data
             const formData = $("#quoteForm").serialize();
@@ -81,14 +81,14 @@
                             quote_id: response.data.quote_id
                         });
 
-                        console.log("Redirecting to: " + redirectUrl);
+                        // console.log("Redirecting to: " + redirectUrl);
 
                         // window.location.href = redirectUrl;
                     } else {
                         // Show error message
-                        $("#quote-message")
-                            .html('<div style="color:#721c24; padding:10px; border-radius:4px;">' +
-                                (response.data ? response.data.message : "An error occurred.") + '</div>');
+                        // $("#quote-message")
+                        //     .html('<div style="color:#721c24; padding:10px; border-radius:4px;">' +
+                        //         (response.data ? response.data.message : "An error occurred.") + '</div>');
 
                         // Re-enable buttons
                         $("#proceedBtn").prop("disabled", false).text("Proceed with Quote");
@@ -97,9 +97,9 @@
                 },
                 error: function () {
                     // Show error message
-                    $("#quote-message")
-                        .html('<div style="color:#721c24; padding:10px; border-radius:4px;">' +
-                            "There was an error processing your request. Please try again." + '</div>');
+                    // $("#quote-message")
+                    //     .html('<div style="color:#721c24; padding:10px; border-radius:4px;">' +
+                    //         "There was an error processing your request. Please try again." + '</div>');
 
                     // Re-enable buttons
                     $("#proceedBtn").prop("disabled", false).text("Proceed with Quote");

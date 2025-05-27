@@ -57,6 +57,7 @@ jQuery(document).ready(function ($) {
         $('.step-1').hide();
         $('.step-2').show();
     });
+    
     $('.back').on('click', function () {
         $('.step-1').show();
         $('.step-2').hide();
